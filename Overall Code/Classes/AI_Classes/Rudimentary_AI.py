@@ -2,6 +2,7 @@
 import Classes.Player as player
 import Classes.Village as village
 import Base_Data.map_data as map_data
+import Base_Data.Building_Data as building_data
 import random
 
 
@@ -13,8 +14,41 @@ class Rudimentary_AI(player.Player):
                     population=0, attack_points=0, defence_points=0, raid_points=0, culture_points=0, villages=[])
 
     #THIS IS THE GENERIC "REFRESH YOURSELF TO THE PRESENT TIME" FUNCTION
-    def update_self(self):
-        pass
+    #time is required to allow for cp calculations
+    #do i need anything else beyond storage, pop, cp?
+    #either way, this needs to be called every single time the player is directly called
+    ####BUT, it can also be called without the player waking themselves up
+    def update_self(self, game_counter):
+        local_duration_slept = game_counter - self.Last_Active
+        for village in self.villages:
+            active_village = map_data.map_dict[village]
+            # update storage
+            active_village.calculate_storage()
+            # update pop
+            active_village.calculate_pop()
+            # update cp
+            self_last_active = self.Last_Active
+            active_village.calculate_cp(game_counter, self_last_active)
+            #update yields
+            resources_gained = active_village.yield_calc()
+            for i in range(len(resources_gained)):
+                resources_gained[i] *= local_duration_slept
+            current_stockpile = active_village.stored
+            current_max = active_village.storage_cap
+            for i in range(len(resources_gained)):
+                if (resources_gained[i] + current_stockpile[i]) > current_max[i]:
+                    current_stockpile[i] = current_max[i]
+                else:
+                    current_stockpile[i] = resources_gained[i] + current_stockpile[i]
+            active_village.stored = current_stockpile
+            print(f"for player {self.name}, village {village}, current stockpile is {current_stockpile}")
+            # COMPLETION OF UPDATING RESOURCES
+        #now we may need to have the ability to handle resets, but in such a way that
+        #if needs be, we can "wake" without actually waking up
+        self.Last_Active = game_counter
+
+
+
 
     #THIS IS THE "UPDATE YOUR WAITING TIME" FUNCTION, FOR CALLS OF THE ABOVE
     def waiting_duration(self, action_time):
@@ -43,27 +77,18 @@ class Rudimentary_AI(player.Player):
                 print(f"Player {self.name} is ready to take an action")
                 print(f" the last active time for the player is {self.Last_Active}")
                 #now reset the last active value to the current time
-                self.Last_Active = game_counter
+
+                #new modification
+                #providing a value of true for self_triggered, since
+                self.update_self(game_counter)
+                #new modification ends
                 #at a later date, it may be necessary to return multiple wait times
                 #so for now, we'll replicate that structure and return a list of times
                 wait_time_list = []
                 for village in self.villages:
                     #ITERATE THROUGH VILLAGES, THEN FOR EACH ACTIVE ONE:
                     active_village = map_data.map_dict[village]
-                    #how many resources have I gained, update totals
-                    resources_gained = active_village.yield_calc()
-                    for i in range(len(resources_gained)):
-                        resources_gained[i] *= local_duration_slept
-                    current_stockpile = active_village.stored
-                    current_max = active_village.storage_cap
-                    for i in range(len(resources_gained)):
-                        if (resources_gained[i] + current_stockpile[i]) > current_max[i]:
-                            current_stockpile[i] = current_max[i]
-                        else:
-                            current_stockpile[i] = resources_gained[i] + current_stockpile[i]
-                    active_village.stored = current_stockpile
-                    print(f"for player {self.name}, village {village}, current stockpile is {current_stockpile}")
-                    #COMPLETION OF UPDATING RESOURCES
+                    #updating of resources removed, since handled above
 
                     #CHECK TO SEE IF YOU HAD A BUILDING YOU WERE UPGRADING
                     if len(active_village.currently_upgrading) > 0:
@@ -73,6 +98,9 @@ class Rudimentary_AI(player.Player):
                         # now we need to reset this back to an empty list
                         # this lets our timer restart
                         self.reset_next_action([])
+                        #now update yourself again because the buildings have changed
+                        #BUT, if its worked properly, the time duration should be zero, so no resources etc should be added
+                        self.update_self(game_counter)
 
                     #NOW WE NEED TO USE SOME MORE CODE - LATER THIS SHOULD BE SPLIT OUT INTO A SEPERATE FUNCTION
                     #BUT LETS MAKE SURE IT ALL WORKS NOW

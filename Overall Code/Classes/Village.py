@@ -19,8 +19,8 @@ class Village(loc_sq.Square):
                           17: '', 18: '', 19: '', 20: '', 21: '', 22: ''}
         #structure of the below - reference key for buildings_dict lookup, level, upgradeable bool.
         self.buildings[0] = ['main_building', 1, True]
-        self.buildings[1] = ['warehouse', 0, True]
-        self.buildings[2] = ['granary', 0, True]
+        self.buildings[1] = ['warehouse1', 0, True]
+        self.buildings[2] = ['granary1', 0, True]
         #SORT THESE OUT LATER
         #self.buildings[22] = ['wall', 0, True]
         #self.buildings[21] = ['rally_point', 0, True]
@@ -40,6 +40,11 @@ class Village(loc_sq.Square):
         #this is going to be used to store unbuilt buildings, once possible
         #for now, it's simply an empty holder
         self.unbuilt = []
+
+
+        ##HOLDER VALUES FOR POPULATION AND CP
+        self.pop = 0
+        self.cp = 0
 
         ####WE NEED A WAY TO CALCULATE MAIN BUILDING, AND UPGRADE APPROPRIATELY
         ##IDEALLY, WE NEED A "RECALCULATE MEANINGFUL VILLAGE LEVEL ATTRIBUTES" FUNCTION
@@ -61,6 +66,55 @@ class Village(loc_sq.Square):
                     storage = building_data.building_dict['granary'][level][4]
                     granary_storage += storage
         self.storage_cap = [warehouse_storage, warehouse_storage, warehouse_storage, granary_storage]
+
+    def calculate_pop(self):
+        total_pop = 0
+        #calculate pop from buildings
+        for key in self.buildings:
+            holder = self.buildings[key]
+            #check if its empty
+            if len(holder) > 0:
+                building = holder[0]
+                #controls for buildings that can duplicate
+                if 'warehouse' in building:
+                    building = 'warehouse'
+                if 'granary' in building:
+                    building = 'granary'
+                level = holder[1]
+                pop = building_data.building_dict[building][level][2]
+                total_pop += pop
+        for key in self.fields:
+            pop = self.fields[key].pop
+            total_pop += pop
+        self.pop = total_pop
+
+    def calculate_cp(self, game_counter, self_last_active):
+        total_cp = 0
+        #calculate pop from buildings
+        for key in self.buildings:
+            holder = self.buildings[key]
+            #check if its empty
+            if len(holder) > 0:
+                building = holder[0]
+                #controls for buildings that can duplicate
+                if 'warehouse' in building:
+                    building = 'warehouse'
+                if 'granary' in building:
+                    building = 'granary'
+                level = holder[1]
+                cp = building_data.building_dict[building][level][1]
+                total_cp += cp
+        for key in self.fields:
+            pop = self.fields[key].cp
+            total_cp += cp
+        local_duration_slept = game_counter - self_last_active
+        #86400 = seconds in a day
+        cp_per_sec = total_cp / 86400
+        cp_gained = cp_per_sec * local_duration_slept
+        current_cp = self.cp
+        self.cp = current_cp + cp_gained
+
+
 
     def yield_calc(self):
         wood_yield = 0
@@ -110,6 +164,11 @@ class Village(loc_sq.Square):
                 #if upgradeable
                 if holdval[2] == True:
                     keyval = holdval[0]
+                    #controls for buildings that can dupe
+                    if 'warehouse' in keyval:
+                        keyval = 'warehouse'
+                    if 'granary' in keyval:
+                        keyval = 'granary'
                     #HOW DO I KNOW THE BUILDINGS LEVEL?
                     upgrade_cost = building_data.building_dict[keyval][holdval_level][0]
                     #BOTH ARE REQUIRED, BECAUSE IF COND1-4 ARE TRUE, BUT COND5-8 AREN'T, IT'S A FUTURE POSSIBLE
@@ -255,7 +314,11 @@ class Village(loc_sq.Square):
         else:
             upgrade_possible = True
         # used to update the villages building list with the new level and upgradeability
-        field_data.level = level_plusone
+
+        #NEW FUNCTION THAT UPDATES THE STATS OF THE FIELD ONCE ITS UPGRADED
+        field_data.update_stats()
+
+
         fields_data.upgradeable = upgrade_possible
 
         #LATER, THIS WILL NEED TO BE CHANGED TO BE A SIMPLE REMOVAL OF THE 0TH INDEX
