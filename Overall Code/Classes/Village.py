@@ -46,9 +46,17 @@ class Village(loc_sq.Square):
         self.pop = 0
         self.cp = 0
 
-        ####WE NEED A WAY TO CALCULATE MAIN BUILDING, AND UPGRADE APPROPRIATELY
-        ##IDEALLY, WE NEED A "RECALCULATE MEANINGFUL VILLAGE LEVEL ATTRIBUTES" FUNCTION
-        #SO WE DON'T NEED A SEPERATE ONE FOR EVERY SINGLE UPGRADE OF THE MAIN BUILDING, GRANARY, WAREHOUSE ETC
+        #HOLDER VALUES FOR MAIN BUILDING UPGRADE TIME
+        #this will need to be modified based on main building level
+        self.upgrade_time_modifier = 1
+
+
+
+    def modify_building_time(self):
+        main_building_key = self.buildings[0][0]
+        main_building_level = self.buildings[0][1]
+        building_time = building_data.building_dict[main_building_key][main_building_level][4]
+        self.upgrade_time_modifier = building_time
 
     def calculate_storage(self):
         warehouse_storage = 0
@@ -228,7 +236,7 @@ class Village(loc_sq.Square):
         upgrade_cost = building_data.building_dict[building_data_key][current_level][0]
         #THIS NEEDS MODIFICATION FOR THE MAIN BUILDING LEVEL
         upgrade_time = building_data.building_dict[building_data_key][current_level][3]
-        true_upgrade_time = generic_funcs.sec_val(upgrade_time)
+        true_upgrade_time = int(generic_funcs.sec_val(upgrade_time) * self.upgrade_time_modifier)
         #now update how many resources you have on hand
         hold_vals = self.stored
         for i in range(len(hold_vals)):
@@ -257,7 +265,7 @@ class Village(loc_sq.Square):
         upgrade_cost = fields_data.field_dict[field_dict_key][current_level][0]
         # THIS NEEDS MODIFICATION TO ALLOW FOR MAIN BUILDING LEVEL
         upgrade_time = fields_data.field_dict[field_dict_key][current_level][3]
-        true_upgrade_time = generic_funcs.sec_val(upgrade_time)
+        true_upgrade_time = int(generic_funcs.sec_val(upgrade_time) * self.upgrade_time_modifier)
         # update what is currently stored as resources
         hold_vals = self.stored
         for i in range(len(hold_vals)):

@@ -22,6 +22,8 @@ class Rudimentary_AI(player.Player):
         local_duration_slept = game_counter - self.Last_Active
         for village in self.villages:
             active_village = map_data.map_dict[village]
+            # update building time
+            active_village.modify_building_time()
             # update storage
             active_village.calculate_storage()
             # update pop
