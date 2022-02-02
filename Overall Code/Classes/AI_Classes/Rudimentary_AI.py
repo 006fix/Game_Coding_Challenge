@@ -44,6 +44,11 @@ class Rudimentary_AI(player.Player):
                     current_stockpile[i] = resources_gained[i] + current_stockpile[i]
             active_village.stored = current_stockpile
             print(f"for player {self.name}, village {village}, current stockpile is {current_stockpile}")
+            resources_per_hour = active_village.yield_calc()
+            for i in range(len(resources_per_hour)):
+                resources_per_hour[i] *= 3600
+            print(f"for player {self.name}, village {village}, current resources generation per hour is {resources_per_hour}")
+
             # COMPLETION OF UPDATING RESOURCES
         #now we may need to have the ability to handle resets, but in such a way that
         #if needs be, we can "wake" without actually waking up
