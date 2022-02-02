@@ -50,28 +50,35 @@ def check_passive():
     return next_action_list
 
 
-def check_players():
+def check_players(calc_leaderboard):
     next_action_list = []
 
     global game_counter
     global global_last_active
     for key in player_data.player_dict:
         active_player = player_data.player_dict[key]
-        wait_time = active_player.will_i_act(game_counter, global_last_active)
+        wait_time = active_player.will_i_act(game_counter, global_last_active, calc_leaderboard)
         next_action_list.append(wait_time)
 
     return next_action_list
 
 
-
-def simulate_time():
+#i = game iteration
+#j = i%j, so leaderboard update triggers every j turns
+def simulate_time(i, j):
     global game_counter
     global time_will_elapse
     global turn_counter
     set_time_elapsed()
     game_counter = game_counter + time_elapsed
     x1 = check_passive()
-    x2 = check_players()
+    #modification of the check_players function to allow for variance every x turns to allow for leaderboard generation
+    if i%j == 0:
+        print(f"UPDATE OF THE LEADERBOARD HAS COMMENCED")
+        calc_leaderboard = True
+    else:
+        calc_leaderboard = False
+    x2 = check_players(calc_leaderboard)
     x3 = x1 + x2
     if len(x3) > 0:
         print("the range of options is as follows:")

@@ -71,7 +71,16 @@ class Rudimentary_AI(player.Player):
     #THIS IS THE FUNCTION THAT CHECKS IF AN UPDATE IS REQUIRED
     #logic - if asleep, pass
     #
-    def will_i_act(self, game_counter, global_last_active):
+    def will_i_act(self, game_counter, global_last_active, calc_leaderboard):
+
+        #adding in a new function to utilise the calc_leaderboard variable
+        #if false, ignore
+        #if true, run an update self regardless of any actual game state
+        #BUT, this will need to be checked to ensure it doesn't accidentally trigger other functions that affect time
+        if calc_leaderboard == True:
+            self.update_self(game_counter)
+        #at present, this merely updates self.
+
 
         #this is set to null, but if the player takes a new action it will be used to reset time
         reset_time = False
@@ -79,6 +88,8 @@ class Rudimentary_AI(player.Player):
         #main function starts
         if self.Sleep == False:
             duration_slept = game_counter - global_last_active
+            #the below variable is literally never used - does it still need to exist?
+            #is there any kind of use for it?
             local_duration_slept = game_counter - self.Last_Active
             if duration_slept == self.next_action:
                 print(f"Player {self.name} is ready to take an action")
