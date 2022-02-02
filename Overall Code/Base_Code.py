@@ -21,7 +21,7 @@ populate_players.populate_players()
 populate_players.update_player_dict()
 
 #now lets try running time
-for i in range(100):
+for i in range(1000):
     move_time.simulate_time()
 
 print(move_time.game_counter)

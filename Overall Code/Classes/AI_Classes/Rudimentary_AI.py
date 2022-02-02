@@ -94,7 +94,14 @@ class Rudimentary_AI(player.Player):
                     if len(active_village.currently_upgrading) > 0:
                         upgraded_building = active_village.currently_upgrading[0]
                         print(f"I, player {self.name} have just finished upgrading {upgraded_building}")
-                        active_village.field_upgraded(upgraded_building)
+                        #here we need to recognise what was upgraded, and properly account for what it actually was
+                        #luckily, buildings return as a 2 part list
+                        if isinstance(upgraded_building, list):
+                            #if this is true, it's a building
+                            active_village.building_upgraded(upgraded_building)
+                        else:
+                            #if this triggers, its a field
+                            active_village.field_upgraded(upgraded_building)
                         # now we need to reset this back to an empty list
                         # this lets our timer restart
                         self.reset_next_action([])
@@ -110,19 +117,39 @@ class Rudimentary_AI(player.Player):
                     print(possible_actions)
 
                     #find possible fields to upgrade
+                    possible_buildings = possible_actions[0]
                     possible_fields = possible_actions[1]
+                    all_possible = possible_buildings + possible_fields
 
                     #select a field
-                    if len(possible_fields) > 0:
-                        chosen_action = random.choice(possible_fields)
+                    if len(all_possible) > 0:
+                        chosen_action = random.choice(all_possible)
                         print(f"I, player {self.name} have chosen to upgrade {chosen_action}")
+
+                    #NOW WE'VE CHOSEN SOMETHING TO UPGRADE
+                    ##BUT IS IT A BUILDING, OR A FIELD?
+                    #we'll use "if in buildings then building else field" to handle this
+
+                        if chosen_action in possible_buildings:
+                            chosen_action_type = 'building'
+                        elif chosen_action in possible_fields:
+                            chosen_action_type = 'field'
+                        else:
+                            raise ValueError(f"I'm afraid I don't recognise what you're trying to upgrade!!!!")
 
                     #initiate the upgrade
                     #BUT ONLY IF THERE'S NOTHING CURRENTLY UPGRADING
                     if len(active_village.currently_upgrading) == 0:
-                        if len(possible_fields) > 0:
+                        if len(all_possible) > 0:
                             reset_time = True
-                            wait_time = active_village.upgrade_field(chosen_action)
+                            #here we need to vary by chosen_action_type
+                            if chosen_action_type == 'building':
+                                #we return both parts of the 2 part key, so we can distinguish fields and buildings
+                                wait_time = active_village.upgrade_building(chosen_action)
+                            elif chosen_action_type == 'field':
+                                wait_time = active_village.upgrade_field(chosen_action)
+                            else:
+                                raise ValueError(f"I don't recognise what i'm upgrading here!")
                             wait_time_list.append(wait_time)
                         else:
                             print(f"I, player {self.name} am currently unable to take an action at this time")
