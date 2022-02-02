@@ -210,51 +210,34 @@ class Village(loc_sq.Square):
     #using the seperate lists, allow for upgrading of a building.
     #if decided to upgrade a building, use this
     def upgrade_building(self, upgrade_target):
-        ####THIS IS CURRENT OUT OF DATE
-        #OUT OF DATE
-        # OUT OF DATE
-        # OUT OF DATE
-        # OUT OF DATE
-        # OUT OF DATE
-        # OUT OF DATE
-
-
-        #MIMIC THE UPGRADE FIELD STRUCTURE BELOW
-        #SPECIFICALLY REMOVAL OF THE UPGRADING OF THE TARGET UNTIL COMPLETION
         building_dict_key = upgrade_target[0]
-        building_data_key = upgrade_target[1]
         relevant_target = self.buildings[building_dict_key]
         current_level = relevant_target[1]
         upgradeable_check = relevant_target[2]
         if upgradeable_check != True:
-            raise ValueError ("You appear to have attempted to upgrade a building that cannot be upgraded :(")
+            print(f" You are upgrading {upgrade_target}")
+            raise ValueError("You appear to have attempted to upgrade a building that cannot be upgraded :(")
+        #from the above we have some basic data, but we need a subset of the name to actually link
+        #to the building data field, due to duplicate buildings. This follows:
+        building_data_key = upgrade_target[1]
+        if 'warehouse' in building_data_key:
+            building_data_key = 'warehouse'
+        if 'granary' in building_data_key:
+            building_data_key = 'granary'
+        #now get upgrade costs
         upgrade_cost = building_data.building_dict[building_data_key][current_level][0]
-
-        #THIS NEEDS MODIFICATION TO ALLOW FOR MAIN BUILDING LEVEL
+        #THIS NEEDS MODIFICATION FOR THE MAIN BUILDING LEVEL
         upgrade_time = building_data.building_dict[building_data_key][current_level][3]
         true_upgrade_time = generic_funcs.sec_val(upgrade_time)
-        #update what is currently stored as resources
+        #now update how many resources you have on hand
         hold_vals = self.stored
         for i in range(len(hold_vals)):
             hold_vals[i] -= upgrade_cost[i]
         self.stored = hold_vals
-        #used to check if the new building can be upgraded
-        level_plusone = current_level + 1
-        still_upgradeable = building_data.building_dict[building_data_key][level_plusone][0]
-        if still_upgradeable[0] == False:
-            upgrade_possible = False
-        else:
-            upgrade_possible = True
-        #used to update the villages building list with the new level and upgradeability
-        old_vals = self.buildings[building_dict_key]
-        old_vals[2] = upgrade_possible
-        old_vals[1] = level_plusone
-        self.buildings[building_dict_key] = old_vals
+        self.currently_upgrading.append(upgrade_target)
 
-        #SOMEWHERE AROUND HERE IS WHERE I NEED TO CALL MY FUTURE "RECALCULATE VILLAGE DETAILS FUNCTIONS"
-
-        #variables to be returned
-        #do i need any more?
+        # variables to be returned
+        # do i need any more?
         sleep_duration = true_upgrade_time
         return sleep_duration
 
@@ -288,13 +271,47 @@ class Village(loc_sq.Square):
         sleep_duration = true_upgrade_time
         return sleep_duration
 
-    def building_upgraded(self):
-        #lets do this later once we've done the field one successfully
-        pass
+    def building_upgraded(self, upgrade_target):
+        #THIS IS STILL JUST THE FIELD VERSION, REMEMBER TO CHANGE IT
+        building_dict_key = upgrade_target[0]
+        relevant_target = self.buildings[building_dict_key]
+        current_level = relevant_target[1]
+        upgradeable_check = relevant_target[2]
+        if upgradeable_check != True:
+            print(f" You are upgrading {upgrade_target}")
+            raise ValueError("You appear to have attempted to upgrade a building that cannot be upgraded :(")
+        #now get the key for the building data file
+        building_data_key = upgrade_target[1]
+        if 'warehouse' in building_data_key:
+            building_data_key = 'warehouse'
+        if 'granary' in building_data_key:
+            building_data_key = 'granary'
+
+        #used to check if the new building is upgradeable
+        level_plusone = current_level + 1
+        still_upgradeable = building_data.building_dict[building_data_key][level_plusone][0]
+        if still_upgradeable[0] == False:
+            upgrade_possible = False
+        else:
+            upgrade_possible = True
+        # used to update the villages building list with the new level and upgradeability
+
+        #NEW FUNCTION THAT UPDATES THE STATS OF THE FIELD ONCE ITS UPGRADED
+        #update self is called in rudimentary ai will_i_act file, so no need for the below
+        #field_data.update_stats()
+
+        #NOW WE NEED TO RESET THE SELF.BUILDINGS KEY TO ACCOUNT FOR EVERYTHING
+        self.buildings[building_dict_key][1] = level_plusone
+        self.buildings[building_dict_key][2] = upgrade_possible
+
+
+        #LATER, THIS WILL NEED TO BE CHANGED TO BE A SIMPLE REMOVAL OF THE 0TH INDEX
+        self.currently_upgrading = []
+
+        print(f"I have completed my upgrade of the building {upgrade_target}. It has upgraded from {current_level} to {level_plusone}")
+
 
     def field_upgraded(self, upgrade_target):
-
-        # SOMEWHERE AROUND HERE IS WHERE I NEED TO CALL MY FUTURE "RECALCULATE VILLAGE DETAILS FUNCTIONS"
 
         field_data = self.fields[upgrade_target]
         field_dict_key = upgrade_target[:4]
@@ -325,6 +342,3 @@ class Village(loc_sq.Square):
         self.currently_upgrading = []
 
         print(f"I have completed my upgrade of field {upgrade_target}. It has upgraded from {current_level} to {level_plusone}")
-
-
-        # self.cp_pday = ????????
