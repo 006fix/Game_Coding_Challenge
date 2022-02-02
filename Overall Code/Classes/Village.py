@@ -161,11 +161,17 @@ class Village(loc_sq.Square):
 
     def possible_buildings(self):
         possible_buildings = [[], []]
+        #get reading of current crop perh hour, so we know how much is spare
+        current_yields = self.yield_calc()
+        #slapping a negative 3 here to stop people reaching 0 pop
+        #a negative one should be sufficient, but that allows some players to reach 0
+        #and some to reach -1. -2 allows for some to reach 0
+        # negative 3 is required for it to prevent going sub zero - WHY WHY WHY
+        current_crop = (3600 * current_yields[3]) - 3
+
         for key in self.buildings:
-            # this bottom one is simply for now, since i've put those holders in
-            # remove this whole step later
             holdval = self.buildings[key]
-            #THIS IS ALSO JUST TO STOP IT BREAKING FROM THE NULL VALUES
+            #THIS IS ALSO JUST TO STOP IT BREAKING FROM THE NULL VALUES in the self building dict
             #but maybe keep long term?
             if len(holdval) > 1:
                 holdval_level = holdval[1]
@@ -179,6 +185,8 @@ class Village(loc_sq.Square):
                         keyval = 'granary'
                     #HOW DO I KNOW THE BUILDINGS LEVEL?
                     upgrade_cost = building_data.building_dict[keyval][holdval_level][0]
+                    level_plusone = holdval_level + 1
+                    upgrade_pop_cost = building_data.building_dict[keyval][level_plusone][2] - building_data.building_dict[keyval][holdval_level][2]
                     #BOTH ARE REQUIRED, BECAUSE IF COND1-4 ARE TRUE, BUT COND5-8 AREN'T, IT'S A FUTURE POSSIBLE
                     #WORK IT OUT LATER
                     #print(f"My upgrade cost is {upgrade_cost}")
@@ -191,7 +199,11 @@ class Village(loc_sq.Square):
                     cond6 = upgrade_cost[1] <= self.stored[1]
                     cond7 = upgrade_cost[2] <= self.stored[2]
                     cond8 = upgrade_cost[3] <= self.stored[3]
-                    if cond1 and cond2 and cond3 and cond4 and cond5 and cond6 and cond7 and cond8:
+                    #new cond for it upgrade pop cost < current crop
+                    #will require a later condition to allow for upgrading of granary and wheat mill
+                    #copy the logic from fields below for this, so it doesn't break again
+                    cond9 = upgrade_pop_cost < current_crop
+                    if cond1 and cond2 and cond3 and cond4 and cond5 and cond6 and cond7 and cond8 and cond9:
                         #builings go in list 1
                         #passed as a two part list, to provide the key and the name
                         final_value = [key, holdval[0]]
@@ -199,8 +211,11 @@ class Village(loc_sq.Square):
         for key in self.fields:
             holdval = self.fields[key]
             holdval_level = holdval.level
+            level_plusone = holdval_level + 1
             key2 = key[:4]
             upgrade_cost = fields_data.field_dict[key2][holdval_level][0]
+            #new addition to handle pop cost
+            upgrade_pop_cost = fields_data.field_dict[key2][level_plusone][2] - fields_data.field_dict[key2][level_plusone][2]
             cond1 = upgrade_cost[0] < self.storage_cap[0]
             cond2 = upgrade_cost[1] < self.storage_cap[1]
             cond3 = upgrade_cost[2] < self.storage_cap[2]
@@ -209,10 +224,17 @@ class Village(loc_sq.Square):
             cond6 = upgrade_cost[1] <= self.stored[1]
             cond7 = upgrade_cost[2] <= self.stored[2]
             cond8 = upgrade_cost[3] <= self.stored[3]
+            #new condition for pop cost
+            #has variant that always allow for building a crop field regardless
+            #set to true, but if crop is not in the key, then it becomes a consideration
+            cond9 = True
+            if 'Crop' not in key:
+                cond9 = upgrade_pop_cost < current_crop
             #new condition added here, since the upgradeability of the fields is stored seperately
-            if len(upgrade_cost) > 1 and cond1 and cond2 and cond3 and cond4 and cond5 and cond6 and cond7 and cond8:
+            if len(upgrade_cost) > 1 and cond1 and cond2 and cond3 and cond4 and cond5 and cond6 and cond7 and cond8 and cond9:
                 #fields go in list two
                 possible_buildings[1].append(key)
+
         return possible_buildings
 
     #using the seperate lists, allow for upgrading of a building.

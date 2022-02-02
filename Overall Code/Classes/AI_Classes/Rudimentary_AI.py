@@ -72,16 +72,6 @@ class Rudimentary_AI(player.Player):
     #logic - if asleep, pass
     #
     def will_i_act(self, game_counter, global_last_active, calc_leaderboard):
-
-        #adding in a new function to utilise the calc_leaderboard variable
-        #if false, ignore
-        #if true, run an update self regardless of any actual game state
-        #BUT, this will need to be checked to ensure it doesn't accidentally trigger other functions that affect time
-        if calc_leaderboard == True:
-            self.update_self(game_counter)
-        #at present, this merely updates self.
-
-
         #this is set to null, but if the player takes a new action it will be used to reset time
         reset_time = False
 
@@ -192,6 +182,14 @@ class Rudimentary_AI(player.Player):
             else:
                 self.next_action -= duration_slept
                 true_wait_time = self.next_action
+
+        #adding in a new function to utilise the calc_leaderboard variable
+        #if false, ignore
+        #if true, run an update self regardless of any actual game state
+        #BUT, this will need to be checked to ensure it doesn't accidentally trigger other functions that affect time
+        if calc_leaderboard == True:
+            self.update_self(game_counter)
+        #at present, this merely updates self.
 
         return true_wait_time
 
