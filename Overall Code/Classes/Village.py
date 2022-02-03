@@ -123,6 +123,30 @@ class Village(loc_sq.Square):
         self.cp = current_cp + cp_gained
 
 
+    #new function to iterate through buildings, and work out their population
+    #to be used in the yield calc calculation
+    def get_building_pop(self):
+        total_pop_usage = 0
+        for key in self.buildings:
+            #this line below is to identify the null values
+            holdval = self.buildings[key]
+            if len(holdval) > 1:
+                building = self.buildings[key][0]
+                building_level = self.buildings[key][1]
+                if 'warehouse' in building:
+                    building = 'warehouse'
+                if 'granary' in building:
+                    building = 'granary'
+                pop_usage = building_data.building_dict[building][building_level][2]
+                total_pop_usage += pop_usage
+
+
+        #now divide by 3600, to match the yield calc
+        total_pop_usage /= 3600
+        return total_pop_usage
+
+
+
 
     def yield_calc(self):
         wood_yield = 0
@@ -144,15 +168,11 @@ class Village(loc_sq.Square):
                 crop_yield += self.fields[key3].field_yield / 3600
                 crop_usage += self.fields[key3].pop / 3600
         #now reduce crop yield by crop usage
-        #######WARNING WARNING WARNING WARNING WARNING
-        #THIS DOES NOT CALCULATE CROP USAGE BY OTHER BUILDINGS
-        #DO THAT SOON
-        #
-        #
-        #
-        #
-        #
 
+        #modification to incorporate building pop usage
+        building_pop_usage = self.get_building_pop()
+        crop_usage += building_pop_usage
+        #modification ends
         crop_yield -= crop_usage
         # now we've got the full yields out, so multiply by time passed
         yields = [wood_yield, clay_yield, iron_yield, crop_yield]
