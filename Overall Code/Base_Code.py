@@ -29,10 +29,3 @@ for i in range(101):
 
 print(move_time.game_counter)
 
-#test comment to confirm update to github
-
-
-####FOR NOW, THIS IS NEVER GOING TO WORK FOR MULTIPLE PLAYERS
-#BECAUSE IT HAS NO WAY OF SUBTRACTING THE TIME PASSED FROM THE OTHER PLAYERS
-#I THINK?
-
