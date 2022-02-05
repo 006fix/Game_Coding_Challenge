@@ -4,6 +4,7 @@ import Classes.Village as village
 import Base_Data.map_data as map_data
 import Base_Data.Building_Data as building_data
 import random
+import Base_Data.Leaderboard_Data as leaderboard
 
 
 class Rudimentary_AI(player.Player):
@@ -189,7 +190,23 @@ class Rudimentary_AI(player.Player):
         #BUT, this will need to be checked to ensure it doesn't accidentally trigger other functions that affect time
         if calc_leaderboard == True:
             self.update_self(game_counter)
-        #at present, this merely updates self.
+        #new code to update the leaderboard initially
+        self_pop = 0
+        self_cp = 0
+        #for now, just write out of the self.attack/defenece/raid - later these will need to be updates
+        attack = self.attack_points
+        defence = self.defence_points
+        raid_points = self.raid_points
+        for village in self.villages:
+            active_village = map_data.map_dict[village]
+            #get_pop
+            vil_pop = active_village.pop
+            # get_cp
+            vil_cp = active_village.cp
+            self_pop += vil_pop
+            self_cp += vil_cp
+        self_data = [self.name, self_pop, self_cp, self.attack_points, self.defence_points, self.raid_points]
+        leaderboard.leaderboard.append(self_data)
 
         return true_wait_time
 

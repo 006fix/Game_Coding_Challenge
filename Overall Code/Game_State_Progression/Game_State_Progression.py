@@ -11,6 +11,7 @@ import Base_Data.map_data as map_data
 import Base_Data.Players_Data as player_data
 import Classes.AI_Classes.Rudimentary_AI as ai
 import random
+import Base_Data.Leaderboard_Data as leaderboard
 
 #set game counter
 #this is the master time counter, all else refers to here
@@ -76,9 +77,15 @@ def simulate_time(i, j):
     if i%j == 0:
         print(f"UPDATE OF THE LEADERBOARD HAS COMMENCED")
         calc_leaderboard = True
+        #refresh the leaderboard
+        leaderboard.new_leaderboard()
     else:
         calc_leaderboard = False
     x2 = check_players(calc_leaderboard)
+    #now all players have been checked, generate the leaderboard
+    leaderboard.produce_leaderboard(leaderboard.leaderboard)
+    print(leaderboard.leaderboard)
+    #resumption of old code
     x3 = x1 + x2
     if len(x3) > 0:
         print("the range of options is as follows:")
