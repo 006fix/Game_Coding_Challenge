@@ -4,7 +4,8 @@
 import pandas as pd
 
 #simple holder value for the leaderboard dataframe
-leaderboard_base = ['name','pop','cp','attack','defence','raid']
+leaderboard_base = ['name','pop','cp','attack','defence','raid', 'resources', 'agg_over_80%capacity', 'single_num_res',
+                    'single_num_over80']
 
 def new_leaderboard():
     global leaderboard

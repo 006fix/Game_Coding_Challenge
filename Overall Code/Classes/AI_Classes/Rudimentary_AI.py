@@ -193,6 +193,10 @@ class Rudimentary_AI(player.Player):
         #new code to update the leaderboard initially
         self_pop = 0
         self_cp = 0
+        self_resources = [0, 0, 0, 0]
+        agg_over_80_perc_stored = [0, 0, 0, 0]
+        aggregate_income = 0
+        aggregate_over80 = 0
         #for now, just write out of the self.attack/defenece/raid - later these will need to be updates
         attack = self.attack_points
         defence = self.defence_points
@@ -205,7 +209,28 @@ class Rudimentary_AI(player.Player):
             vil_cp = active_village.cp
             self_pop += vil_pop
             self_cp += vil_cp
-        self_data = [self.name, self_pop, self_cp, self.attack_points, self.defence_points, self.raid_points]
+            income = active_village.yield_calc()
+            for res_type in range(len(income)):
+                self_resources[res_type] += income[res_type]
+            currently_stored = active_village.storage_cap
+            current_resources = active_village.stored
+            #now get over 80% instances
+            #this is a local version, but if needs be it can be extracted later
+            over_80_perc_stored = [0, 0, 0, 0]
+            #if you need local over 80%, extract this later
+            for checking_caps in range(len(current_resources)):
+                if (current_resources[checking_caps] / currently_stored[checking_caps]) >= 0.8:
+                    over_80_perc_stored[checking_caps] += 1
+                    agg_over_80_perc_stored[checking_caps] += 1
+                else:
+                    over_80_perc_stored[checking_caps] = 0
+            for zz in range(len(current_resources)):
+                aggregate_income += income[zz]
+                aggregate_over80 += over_80_perc_stored[zz]
+
+
+        self_data = [self.name, self_pop, self_cp, self.attack_points, self.defence_points, self.raid_points,
+                     self_resources, agg_over_80_perc_stored, aggregate_income, aggregate_over80]
         leaderboard.leaderboard.append(self_data)
 
         return true_wait_time
