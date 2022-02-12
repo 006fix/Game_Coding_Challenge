@@ -27,6 +27,11 @@ class level_by_level_10a(baseclass.Underlying_Hardcoded):
             if level == lowest_level:
                 output_subset.append(item)
 
-        chosen_action = random.choice(output_subset)
+        if len(output_subset) > 0:
+            choose_from_this = output_subset
+        else:
+            choose_from_this = all_possible
+
+        chosen_action = random.choice(choose_from_this)
 
         return chosen_action
