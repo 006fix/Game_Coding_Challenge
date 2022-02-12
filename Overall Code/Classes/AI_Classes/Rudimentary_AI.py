@@ -15,7 +15,8 @@ class Rudimentary_AI(player.Player):
         super().__init__(name, quadrant, race,
                     population=0, attack_points=0, defence_points=0, raid_points=0, culture_points=0, villages=[])
         ##insertion of the AI class chosen will go here, in the instantiation of the rudimentary ai class
-        ai_seed = random.randint(0, 100)
+        ai_seed_topval = AI_selection.numeric_ai_possibles
+        ai_seed = random.randint(0, ai_seed_topval)
         self.AI = AI_selection.provide_ai(ai_seed, self.name)
 
 

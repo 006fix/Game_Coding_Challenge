@@ -9,6 +9,7 @@
 import Classes.AI_Classes.Hardcoded_AI.Hardcoded_AI_baseclass as baseclass
 import random
 
+
 class Early_Field_Focus_7a(baseclass.Underlying_Hardcoded):
     def __init__(self, owning_player):
         super().__init__(owning_player)
