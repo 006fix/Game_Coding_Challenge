@@ -31,6 +31,10 @@
 #
 # Logic:
 #     Genetic algorithms will be used for 4, 5, 8, 9
+#     Additional details required for 7, 8, 9, 10, 11
+#     Currently not implemented for 7, 10, 11, until further detail is provided
+#     As such, 7, 10, 11 are now to be referred to as 7a, 10a, 11a
+#     We will then build b variants for 7, 10, 11, that do provide additional details
 #
 # For all cases where genetic algorithms are used, they will be trained for a number of generations
 # Once trained, they can be incorporated into the remainder

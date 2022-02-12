@@ -7,8 +7,9 @@ import Classes.AI_Classes.Hardcoded_AI.Hardcoded_AI_Storage.Full_Random1 as full
 import Classes.AI_Classes.Hardcoded_AI.Hardcoded_AI_Storage.Field_Focus_Random2 as field_random
 import Classes.AI_Classes.Hardcoded_AI.Hardcoded_AI_Storage.Field_Focus_Lowest_lvl3 as field_lowest_lvl
 import Classes.AI_Classes.Hardcoded_AI.Hardcoded_AI_Storage.Main_Building6 as main_building_focus
-import Classes.AI_Classes.Hardcoded_AI.Hardcoded_AI_Storage.Level_by_Level10 as level_by_level
-import Classes.AI_Classes.Hardcoded_AI.Hardcoded_AI_Storage.Level_by_Level_mod11 as level_by_level_mod
+import Classes.AI_Classes.Hardcoded_AI.Hardcoded_AI_Storage.Level_by_Level10a as level_by_level
+import Classes.AI_Classes.Hardcoded_AI.Hardcoded_AI_Storage.Level_by_Level_mod11a as level_by_level_mod
+import Classes.AI_Classes.Hardcoded_AI.Hardcoded_AI_Storage.Early_Field_Focus7a as early_field_focus
 
 def provide_ai(randint, owning_player):
     if randint >= 101:
@@ -21,7 +22,10 @@ def provide_ai(randint, owning_player):
     elif randint >= 401:
         AI_chosen = main_building_focus.Main_Building_Focus_6(owning_player)
     elif randint >= 501:
-        AI_chosen = level_by_level.level_by_level_10(owning_player)
+        AI_chosen = level_by_level.level_by_level_10a(owning_player)
+    elif randint >= 601:
+        AI_chosen = level_by_level_mod.level_by_level_mod_11a(owning_player)
     elif randint <= 100:
-        AI_chosen = level_by_level_mod.level_by_level_mod_11(owning_player)
+        AI_chosen = early_field_focus.Early_Field_Focus_7a(owning_player)
+
     return AI_chosen
