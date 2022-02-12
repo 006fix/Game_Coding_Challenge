@@ -14,6 +14,7 @@ def new_leaderboard():
 
 def produce_leaderboard(leaderboard):
     global leaderboard_df
+    new_leaderboard()
     leaderboard_df = pd.DataFrame(leaderboard)
     leaderboard_df.columns = leaderboard_base
     leaderboard_df['pop_rank'] = leaderboard_df['pop'].rank(ascending=False)

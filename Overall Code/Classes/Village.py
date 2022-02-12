@@ -226,7 +226,7 @@ class Village(loc_sq.Square):
                     if cond1 and cond2 and cond3 and cond4 and cond5 and cond6 and cond7 and cond8 and cond9:
                         #builings go in list 1
                         #passed as a two part list, to provide the key and the name
-                        final_value = [key, holdval[0]]
+                        final_value = [key, holdval[0], holdval_level]
                         possible_buildings[0].append(final_value)
         for key in self.fields:
             holdval = self.fields[key]
@@ -253,7 +253,8 @@ class Village(loc_sq.Square):
             #new condition added here, since the upgradeability of the fields is stored seperately
             if len(upgrade_cost) > 1 and cond1 and cond2 and cond3 and cond4 and cond5 and cond6 and cond7 and cond8 and cond9:
                 #fields go in list two
-                possible_buildings[1].append(key)
+                append_details = [key, holdval_level]
+                possible_buildings[1].append(append_details)
 
         return possible_buildings
 

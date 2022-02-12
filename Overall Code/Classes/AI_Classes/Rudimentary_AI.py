@@ -154,9 +154,9 @@ class Rudimentary_AI(player.Player):
                             #here we need to vary by chosen_action_type
                             if chosen_action_type == 'building':
                                 #we return both parts of the 2 part key, so we can distinguish fields and buildings
-                                wait_time = active_village.upgrade_building(chosen_action)
+                                wait_time = active_village.upgrade_building(chosen_action[:2])
                             elif chosen_action_type == 'field':
-                                wait_time = active_village.upgrade_field(chosen_action)
+                                wait_time = active_village.upgrade_field(chosen_action[0])
                             else:
                                 raise ValueError(f"I don't recognise what i'm upgrading here!")
                             wait_time_list.append(wait_time)
