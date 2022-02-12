@@ -137,6 +137,7 @@ class Rudimentary_AI(player.Player):
 
                     #select a field
                     if len(all_possible) > 0:
+                        #print(all_possible)
                         chosen_action = self.AI.select_building(all_possible)
                         print(f"I, player {self.name} have chosen to upgrade {chosen_action}")
 
