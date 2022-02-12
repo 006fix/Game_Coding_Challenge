@@ -7,6 +7,7 @@ import random
 class Field_Focus_lowest_level_3(baseclass.Underlying_Hardcoded):
     def __init__(self, owning_player):
         super().__init__(owning_player)
+        self.name = "Field_Focus_Lowest_Level: 3"
 
     def select_building(self, all_possible):
 

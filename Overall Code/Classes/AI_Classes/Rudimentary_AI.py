@@ -230,7 +230,7 @@ class Rudimentary_AI(player.Player):
                 aggregate_income += income[zz]
 
 
-        self_data = [self.name, self_pop, self_cp, self.attack_points, self.defence_points, self.raid_points,
+        self_data = [self.name, self.AI.name, self_pop, self_cp, self.attack_points, self.defence_points, self.raid_points,
                      self_resources, aggregate_income, perc_stored]
         leaderboard.leaderboard.append(self_data)
 

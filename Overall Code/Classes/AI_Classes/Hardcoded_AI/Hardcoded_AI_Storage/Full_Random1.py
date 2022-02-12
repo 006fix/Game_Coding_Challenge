@@ -7,6 +7,7 @@ import random
 class Full_Random_1(baseclass.Underlying_Hardcoded):
     def __init__(self, owning_player):
         super().__init__(owning_player)
+        self.name = "Full Random: 1"
 
     def select_building(self, all_possible):
 

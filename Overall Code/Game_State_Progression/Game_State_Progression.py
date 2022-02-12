@@ -83,8 +83,10 @@ def simulate_time(i, j):
         calc_leaderboard = False
     x2 = check_players(calc_leaderboard)
     #now all players have been checked, generate the leaderboard
-    leaderboard.produce_leaderboard(leaderboard.leaderboard)
-    print(leaderboard.leaderboard_df)
+    #but only if calc_leaderboard is true
+    if calc_leaderboard:
+        leaderboard.produce_leaderboard(leaderboard.leaderboard, i)
+        print(leaderboard.leaderboard_df)
     #resumption of old code
     x3 = x1 + x2
     if len(x3) > 0:

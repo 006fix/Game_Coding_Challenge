@@ -8,6 +8,7 @@ import random
 class Main_Building_Focus_6(baseclass.Underlying_Hardcoded):
     def __init__(self, owning_player):
         super().__init__(owning_player)
+        self.name = "Main Building: 6"
 
     def select_building(self, all_possible):
 

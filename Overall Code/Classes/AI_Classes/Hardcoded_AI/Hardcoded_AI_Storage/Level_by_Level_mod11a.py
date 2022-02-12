@@ -9,6 +9,7 @@ import random
 class level_by_level_mod_11a(baseclass.Underlying_Hardcoded):
     def __init__(self, owning_player):
         super().__init__(owning_player)
+        self.name = "Level by Level mod: 11a"
 
     def select_building(self, all_possible):
 

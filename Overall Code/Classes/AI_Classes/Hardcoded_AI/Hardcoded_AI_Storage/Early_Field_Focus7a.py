@@ -13,6 +13,7 @@ import random
 class Early_Field_Focus_7a(baseclass.Underlying_Hardcoded):
     def __init__(self, owning_player):
         super().__init__(owning_player)
+        self.name = "Early_Field_Focus: 7a"
 
     def select_building(self, all_possible):
 
