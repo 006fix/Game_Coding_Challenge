@@ -28,10 +28,10 @@ class Village(loc_sq.Square):
         self.storage_cap = [800, 800, 800, 800]
 
         #just going to briefly randomise this so players act at different times
-        base_value = random.randint(5, 200)
-        self.stored = [base_value, base_value, base_value, base_value]
+        #base_value = random.randint(5, 200)
+        #self.stored = [base_value, base_value, base_value, base_value]
         #uncomment this later to restore functionality
-        #self.stored = [5, 5, 5, 5]
+        self.stored = [500, 500, 500, 500]
 
         #this is the storage for anything you're currently building, in sequential order
         #for now we'll only allow one upgrade
