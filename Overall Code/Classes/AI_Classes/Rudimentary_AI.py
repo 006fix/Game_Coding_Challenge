@@ -5,6 +5,7 @@ import Base_Data.map_data as map_data
 import Base_Data.Building_Data as building_data
 import random
 import Base_Data.Leaderboard_Data as leaderboard
+import Classes.AI_Classes.Hardcoded_AI.AI_selection as AI_selection
 
 
 class Rudimentary_AI(player.Player):
@@ -13,6 +14,10 @@ class Rudimentary_AI(player.Player):
                  villages=[], AI_type = 'generic'):
         super().__init__(name, quadrant, race,
                     population=0, attack_points=0, defence_points=0, raid_points=0, culture_points=0, villages=[])
+        ##insertion of the AI class chosen will go here, in the instantiation of the rudimentary ai class
+        ai_seed = random.randint(0, 100)
+        self.AI = AI_selection.provide_ai(ai_seed, self.name)
+
 
     #THIS IS THE GENERIC "REFRESH YOURSELF TO THE PRESENT TIME" FUNCTION
     #time is required to allow for cp calculations
@@ -132,7 +137,7 @@ class Rudimentary_AI(player.Player):
 
                     #select a field
                     if len(all_possible) > 0:
-                        chosen_action = random.choice(all_possible)
+                        chosen_action = self.AI.select_building(all_possible)
                         print(f"I, player {self.name} have chosen to upgrade {chosen_action}")
 
                     #NOW WE'VE CHOSEN SOMETHING TO UPGRADE

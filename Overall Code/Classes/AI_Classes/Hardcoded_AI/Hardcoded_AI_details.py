@@ -43,3 +43,6 @@
 #
 # For combined score, res, cp, and pop will all be normalised to a range of 0-1, then used as a metric
 #
+#
+#we're going to use the "chosen action" section to insert our AI's.
+#these will be tied to individual players via instantiation of the rudimentary AI class
