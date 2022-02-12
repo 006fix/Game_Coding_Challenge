@@ -18,7 +18,7 @@ charts_base = []
 #variables used in the creation of the final output graphs
 outpath1 = r"C:\Users\pyeac\Desktop\Travian_Game\Output_Charts"
 #new variable to generate a subset if I want to store multiple tests
-outpath2 = r"\test1"
+outpath2 = r"\test2"
 #variable to store both aggregate and specific outputs
 outpath3_list = [r"\Aggregate", r"\Specific"]
 #we'll also generate more outpath variables later, to store the various varietities
@@ -36,6 +36,7 @@ def produce_leaderboard(leaderboard, i):
     leaderboard_df['pop_rank'] = leaderboard_df['pop'].rank(ascending=True)
     leaderboard_df['cp_rank'] = leaderboard_df['cp'].rank(ascending=True)
     leaderboard_df['res_rank'] = leaderboard_df['single_num_res'].rank(ascending=True)
+    leaderboard_df['total_rank'] = leaderboard_df['pop_rank'] + leaderboard_df['cp_rank'] + leaderboard_df['res_rank']
     if len(charts_base) == 0:
         instantiate_chart_base(leaderboard_df)
         instantiate_charts(charts_base)
@@ -53,6 +54,7 @@ def instantiate_charts(charts_base):
     global rank_pop_base
     global rank_cp_base
     global rank_res_base
+    global total_rank_base
 
     raw_pop_base = charts_base
     raw_cp_base = charts_base
@@ -60,6 +62,7 @@ def instantiate_charts(charts_base):
     rank_pop_base = charts_base
     rank_cp_base = charts_base
     rank_res_base = charts_base
+    total_rank_base = charts_base
 
 #associated global variable for the below function, which simply tracks leaderboard "turn counter", and then
 #provides a suitable axis
@@ -71,6 +74,7 @@ def produce_charts(leaderboard_df, i):
     global rank_pop_base
     global rank_cp_base
     global rank_res_base
+    global total_rank_base
 
     new_label = str(i)
     #now we modify the various charts.
@@ -81,6 +85,7 @@ def produce_charts(leaderboard_df, i):
     rank_pop_base = pd.merge(rank_pop_base, leaderboard_df[['name', 'pop_rank']], on='name', how='left')
     rank_cp_base = pd.merge(rank_cp_base, leaderboard_df[['name', 'cp_rank']], on='name', how='left')
     rank_res_base = pd.merge(rank_res_base, leaderboard_df[['name', 'res_rank']], on='name', how='left')
+    total_rank_base = pd.merge(total_rank_base, leaderboard_df[['name', 'total_rank']], on='name', how='left')
 
     new_cols = list(raw_pop_base.columns)
     new_cols[-1] = new_label
@@ -90,6 +95,7 @@ def produce_charts(leaderboard_df, i):
     rank_pop_base.columns = new_cols
     rank_cp_base.columns = new_cols
     rank_res_base.columns = new_cols
+    total_rank_base.columns = new_cols
 
 
 def produce_final_outputs():
@@ -103,11 +109,11 @@ def produce_final_outputs():
             os.makedirs(outpath_temp)
 
     #now that we've created the various directories, lets create our charts
-    tables_list = [raw_pop_base, raw_cp_base, raw_res_base, rank_pop_base, rank_cp_base, rank_res_base]
+    tables_list = [raw_pop_base, raw_cp_base, raw_res_base, rank_pop_base, rank_cp_base, rank_res_base, total_rank_base]
     tables_list_names = ["raw_pop_base", "raw_cp_base", "raw_res_base", "rank_pop_base",
-                         "rank_cp_base", "rank_res_base"]
+                         "rank_cp_base", "rank_res_base", "total_rank_base"]
     table_y_axis_names = ["population", "culture points", "total resources per second",
-                          "population rank", "culture points rank", "resources rank"]
+                          "population rank", "culture points rank", "resources rank", "total rank"]
     #step 1 is to create the Aggregate_files
     outpath3_active = r"\Aggregate"
 
