@@ -7,6 +7,7 @@ import Classes.AI_Classes.Hardcoded_AI.Hardcoded_AI_Storage.Full_Random1 as full
 import Classes.AI_Classes.Hardcoded_AI.Hardcoded_AI_Storage.Field_Focus_Random2 as field_random
 import Classes.AI_Classes.Hardcoded_AI.Hardcoded_AI_Storage.Field_Focus_Lowest_lvl3 as field_lowest_lvl
 import Classes.AI_Classes.Hardcoded_AI.Hardcoded_AI_Storage.Main_Building6 as main_building_focus
+import Classes.AI_Classes.Hardcoded_AI.Hardcoded_AI_Storage.Level_by_Level10 as level_by_level
 
 def provide_ai(randint, owning_player):
     if randint >= 101:
@@ -16,6 +17,8 @@ def provide_ai(randint, owning_player):
         AI_chosen = field_random.Field_Focus_2(owning_player)
     elif randint >= 301:
         AI_chosen = field_lowest_lvl.Field_Focus_lowest_level_3(owning_player)
-    elif randint <= 100:
+    elif randint >= 401:
         AI_chosen = main_building_focus.Main_Building_Focus_6(owning_player)
+    elif randint <= 100:
+        AI_chosen = level_by_level.level_by_level_10(owning_player)
     return AI_chosen
