@@ -27,7 +27,7 @@ for i in range(25001):
     print(i)
     #modification of the simulate_time function to allow for leaderboard calculation every x turns
     #j serves as the i%j modifier, such that this will trigger every j turns
-    j = 200
+    j = 100
     move_time.simulate_time(i, j)
 
 #print(leaderboard_data.rank_pop_base)

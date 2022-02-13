@@ -36,7 +36,8 @@ def produce_leaderboard(leaderboard, i):
     leaderboard_df['pop_rank'] = leaderboard_df['pop'].rank(ascending=True)
     leaderboard_df['cp_rank'] = leaderboard_df['cp'].rank(ascending=True)
     leaderboard_df['res_rank'] = leaderboard_df['single_num_res'].rank(ascending=True)
-    leaderboard_df['total_rank'] = leaderboard_df['pop_rank'] + leaderboard_df['cp_rank'] + leaderboard_df['res_rank']
+    leaderboard_df['total_rank_pre'] = leaderboard_df['pop_rank'] + leaderboard_df['cp_rank'] + leaderboard_df['res_rank']
+    leaderboard_df['total_rank'] = leaderboard_df['total_rank_pre'].rank(ascending=True)
     if len(charts_base) == 0:
         instantiate_chart_base(leaderboard_df)
         instantiate_charts(charts_base)
@@ -133,6 +134,38 @@ def produce_final_outputs():
         plt.xlabel("Game Turns")
         plt.ylabel(table_y_axis_names[i])
         plt.title(tables_list_names[i])
-        plt.legend()
-        plt.savefig(final_outpath)
+        plt.xticks([])
+        plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), shadow=True, ncol=4)
+        plt.savefig(final_outpath, bbox_inches='tight')
         plt.clf()
+
+    #step 2 is to create the specific files
+    outpath3_active = r"\Specific"
+    #we also need to get all the unique AI types to subset them
+    ignore_table = tables_list[0]
+    unique_vals = ignore_table['AI_name'].unique()
+    #now loop through tables as before
+
+    for i in range(len(tables_list)):
+        for j in range(len(unique_vals)):
+            active_table = tables_list[i].loc[tables_list[i]['AI_name'] == unique_vals[j]]
+            del active_table['AI_name']
+            table_title = tables_list_names[i] + unique_vals[j]
+            table_name = tables_list_names[i] + str(j)
+            final_outpath = outpath1 + outpath2 + outpath3_active + r"\\" + table_name + ".png"
+            transposed_table = active_table.T
+            transposed_table.reset_index(inplace=True)
+            headers = transposed_table.iloc[0]
+            new_transposed_table = pd.DataFrame(transposed_table.values[1:], columns=headers)
+
+            #print(transposed_table)
+            for col in new_transposed_table.columns:
+                if not col == 'name':
+                    plt.plot(new_transposed_table['name'], new_transposed_table[col], label=str(col))
+            plt.xlabel("Game Turns")
+            plt.ylabel(table_y_axis_names[i])
+            plt.title(table_title)
+            plt.xticks([])
+            plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), shadow=True, ncol=4)
+            plt.savefig(final_outpath, bbox_inches='tight')
+            plt.clf()
