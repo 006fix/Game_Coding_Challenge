@@ -32,6 +32,9 @@ for i in range(101):
 
 #print(leaderboard_data.rank_pop_base)
 #print(leaderboard_data.raw_pop_base)
-#leaderboard_data.produce_final_outputs()
+produce_graphs = True
+
+if produce_graphs:
+    leaderboard_data.produce_final_outputs()
 print(move_time.game_counter)
 
