@@ -15,7 +15,7 @@ class Early_Field_Focus_7a(baseclass.Underlying_Hardcoded):
         super().__init__(owning_player)
         self.name = "Early_Field_Focus: 7a"
 
-    def select_building(self, all_possible):
+    def select_building(self, all_possible, info_packet):
 
         #control for if there's only warehouse and main building upgrades
         priority_warehouse = []

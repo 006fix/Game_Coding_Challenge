@@ -10,7 +10,7 @@ class level_by_level_10a(baseclass.Underlying_Hardcoded):
         super().__init__(owning_player)
         self.name = "Level by Level: 10a"
 
-    def select_building(self, all_possible):
+    def select_building(self, all_possible, info_packet):
 
         #now add in a modifier for field_subset
         lowest_level = 500

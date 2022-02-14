@@ -10,7 +10,7 @@ class Main_Building_Focus_6(baseclass.Underlying_Hardcoded):
         super().__init__(owning_player)
         self.name = "Main Building: 6"
 
-    def select_building(self, all_possible):
+    def select_building(self, all_possible, info_packet):
 
         final_output = []
         for item in all_possible:

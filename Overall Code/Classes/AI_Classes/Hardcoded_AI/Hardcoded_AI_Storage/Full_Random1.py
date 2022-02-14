@@ -9,7 +9,7 @@ class Full_Random_1(baseclass.Underlying_Hardcoded):
         super().__init__(owning_player)
         self.name = "Full Random: 1"
 
-    def select_building(self, all_possible):
+    def select_building(self, all_possible, info_packet):
 
         chosen_action = random.choice(all_possible)
 

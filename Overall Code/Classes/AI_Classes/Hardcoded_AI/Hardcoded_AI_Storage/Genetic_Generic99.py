@@ -4,6 +4,7 @@
 
 import Classes.AI_Classes.Hardcoded_AI.Hardcoded_AI_baseclass as baseclass
 import random
+import numpy as np
 
 #the info packet delivered to this algorithm contains the following datapoints:
 #main building level, warehouse level, granary level
@@ -11,15 +12,15 @@ import random
 #current stored resources
 #turn
 
-#for each item on this data packet, we will store 3 variables, referred to as ax, bx, cx
-#example - input value = 5. a1 = 2.4, a2 = 1.02, a3 = 0.85
-#output = (2.4*(5^1.02))^0.85
-#but these shall simply be stored as [2.4, 1.02, 0.85,.....]
+#for each item on this data packet, we will store 4 variables, referred to as ax, bx, cx, dx
+#example - input value = 5. a1 = 2.4, a2 = 1.02, a3 = 0.85, dx = 0.5
+#output = (2.4*(5^1.02))^0.85 + 0.5
+#but these shall simply be stored as [2.4, 1.02, 0.85, 0.5.....]
 
-#given there are 12 input variables, this means we have 36 values per gene
+#given there are 12 input variables, this means we have 48 values per gene
 #we shall generate 7 genes, such that each possible output (main building, warehouse, granary, 4 fields)
 #can be given their own output
-#this means our chromosome will contain 252 values. genes are arbitrary, and will be derived in calculation
+#this means our chromosome will contain 336 values. genes are arbitrary, and will be derived in calculation
 
 
 
@@ -31,15 +32,12 @@ class Genetic_Generic_1(baseclass.Underlying_Hardcoded):
         #temporary one to allow for easy shuffling of genes to the self.genes
         self.temporary_chromosome = chromosome
         self.genes = {"main_building": 0, "warehouse": 0, "granary": 0, "Wood": 0, "Clay": 0,
-                      "Iron_level": 0, "Crop_level": 0}
+                      "Iron": 0, "Crop": 0}
 
         for key in self.genes:
-            holder_set = self.temporary_chromosome[:36]
-            self.temporary_chromosome = self.temporary_chromosome[36:]
-            final_output = []
-            for i in range(0, 12):
-                subset = holder_set[i:(3*i)+1]
-                final_output.append(subset)
+            holder_set = self.temporary_chromosome[:48]
+            self.temporary_chromosome = self.temporary_chromosome[48:]
+            final_output = np.array_split(holder_set, 12)
 
             self.genes[key] = final_output
 
@@ -65,8 +63,9 @@ class Genetic_Generic_1(baseclass.Underlying_Hardcoded):
 
         predicted_utility = 0
         for iterator in range(len(info_packet)):
-            gene_subset = active_gene[iterator]
-            partial_val = (active_gene[0] * (info_packet[iterator]**active_gene[1]))**active_gene[2]
+            #list required because it's a numpy array which doesn't iterate properly otherwise
+            gene_subset = list(active_gene[iterator])
+            partial_val = ((gene_subset[0] * (info_packet[iterator]**gene_subset[1]))**gene_subset[2]) + gene_subset[3]
             predicted_utility += partial_val
 
         return predicted_utility
@@ -82,7 +81,11 @@ class Genetic_Generic_1(baseclass.Underlying_Hardcoded):
                 current_best = utility_val
                 current_choice = building
 
-        chosen_action = current_choice
+        #control for cases where it defaults to a value of 0
+        if current_choice == 0:
+            chosen_action = random.choice(all_possible)
+        else:
+            chosen_action = current_choice
 
         return chosen_action
 

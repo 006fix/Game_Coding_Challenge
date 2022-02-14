@@ -9,7 +9,7 @@ class Field_Focus_lowest_level_3(baseclass.Underlying_Hardcoded):
         super().__init__(owning_player)
         self.name = "Field_Focus_Lowest_Level: 3"
 
-    def select_building(self, all_possible):
+    def select_building(self, all_possible, info_packet):
 
         field_subset = []
         for item in all_possible:

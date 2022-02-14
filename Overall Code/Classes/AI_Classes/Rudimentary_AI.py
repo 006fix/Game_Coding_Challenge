@@ -17,7 +17,9 @@ class Rudimentary_AI(player.Player):
         ##insertion of the AI class chosen will go here, in the instantiation of the rudimentary ai class
         ai_seed_topval = AI_selection.numeric_ai_possibles
         ai_seed = random.randint(0, ai_seed_topval)
-        self.AI = AI_selection.provide_ai(ai_seed, self.name)
+        ##genetic algorithm testing modification
+        #self.AI = AI_selection.provide_ai(ai_seed, self.name)
+        self.AI = AI_selection.provide_ai_gentest(ai_seed, self.name)
 
 
     #THIS IS THE GENERIC "REFRESH YOURSELF TO THE PRESENT TIME" FUNCTION
@@ -126,7 +128,7 @@ class Rudimentary_AI(player.Player):
 
         stored = active_village.stored
         for res in stored:
-            info_packet.append(stored[res])
+            info_packet.append(res)
         info_packet.append(i)
 
         return info_packet
@@ -137,11 +139,6 @@ class Rudimentary_AI(player.Player):
     #logic - if asleep, pass
     #
     def will_i_act(self, game_counter, global_last_active, calc_leaderboard, i):
-
-        #ADDING IN A NEW BOOL VARIABLE SO I CAN TEST GENETIC ALGORITHM FUNCTIONALITY
-        #WITHOUT ALTERING FUNCTIONAL CODE FOR NON GENETIC AIS
-        Genetic_Test = False
-
 
         #this is set to null, but if the player takes a new action it will be used to reset time
         reset_time = False
@@ -204,13 +201,8 @@ class Rudimentary_AI(player.Player):
                     if len(all_possible) > 0:
                         #print(all_possible)
 
-                        if Genetic_Test == False:
-                            chosen_action = self.AI.select_building(all_possible)
-                            print(f"I, player {self.name} have chosen to upgrade {chosen_action}")
-                        #above is old functional code, below is new genetic code
-                        else:
-                            info_packet = self.information_packet(i)
-                            chosen_action = self.AI.select_building(all_possible, info_packet)
+                        info_packet = self.information_packet(i)
+                        chosen_action = self.AI.select_building(all_possible, info_packet)
 
                     #NOW WE'VE CHOSEN SOMETHING TO UPGRADE
                     ##BUT IS IT A BUILDING, OR A FIELD?
