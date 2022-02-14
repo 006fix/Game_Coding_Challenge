@@ -23,15 +23,15 @@ populate_players.populate_players()
 populate_players.update_player_dict()
 
 #now lets try running time
-for i in range(25001):
+for i in range(101):
     print(i)
     #modification of the simulate_time function to allow for leaderboard calculation every x turns
     #j serves as the i%j modifier, such that this will trigger every j turns
-    j = 100
+    j = 10
     move_time.simulate_time(i, j)
 
 #print(leaderboard_data.rank_pop_base)
 #print(leaderboard_data.raw_pop_base)
-leaderboard_data.produce_final_outputs()
+#leaderboard_data.produce_final_outputs()
 print(move_time.game_counter)
 

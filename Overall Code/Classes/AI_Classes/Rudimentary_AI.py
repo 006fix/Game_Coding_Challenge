@@ -75,10 +75,74 @@ class Rudimentary_AI(player.Player):
             self.next_action = 20000  #wait a little while then check again
         print(f"player {self.name} will awaken in {self.next_action} seconds")
 
+    #this function will be used by the genetic algorithm, generating an up to date list of all information
+    #about the village, and packeting it for later consumption
+    def information_packet(self, i):
+        #info packets generated :
+        #main building level, warehouse level, granary level
+        #average field level for each resource type
+        #current resources stored for each resource type
+        #turn counter (i)
+
+        #we've only got one village for now so just using a 1 loop call
+        for village in self.villages:
+            active_village = map_data.map_dict[village]
+
+        info_packet = []
+        info_packet.append(active_village.buildings[0][1])
+        info_packet.append(active_village.buildings[1][1])
+        info_packet.append(active_village.buildings[2][1])
+        #now fields
+        wood_level = 0
+        wood_count = 0
+        clay_level = 0
+        clay_count = 0
+        iron_level = 0
+        iron_count = 0
+        crop_level = 0
+        crop_count = 0
+
+        for field in active_village.fields:
+            if 'Wood' in field:
+                wood_count += 1
+                wood_level += active_village.fields[field].level
+            if 'Clay' in field:
+                clay_count += 1
+                clay_level += active_village.fields[field].level
+            if 'Iron' in field:
+                iron_count += 1
+                iron_level += active_village.fields[field].level
+            if 'Crop' in field:
+                crop_count += 1
+                crop_level += active_village.fields[field].level
+        wood_av = wood_level/wood_count
+        clay_av = clay_level/clay_count
+        iron_av = iron_level/iron_count
+        crop_av = crop_level/crop_count
+        info_packet.append(wood_av)
+        info_packet.append(clay_av)
+        info_packet.append(iron_av)
+        info_packet.append(crop_av)
+
+        stored = active_village.stored
+        for res in stored:
+            info_packet.append(stored[res])
+        info_packet.append(i)
+
+        return info_packet
+
+
+
     #THIS IS THE FUNCTION THAT CHECKS IF AN UPDATE IS REQUIRED
     #logic - if asleep, pass
     #
-    def will_i_act(self, game_counter, global_last_active, calc_leaderboard):
+    def will_i_act(self, game_counter, global_last_active, calc_leaderboard, i):
+
+        #ADDING IN A NEW BOOL VARIABLE SO I CAN TEST GENETIC ALGORITHM FUNCTIONALITY
+        #WITHOUT ALTERING FUNCTIONAL CODE FOR NON GENETIC AIS
+        Genetic_Test = False
+
+
         #this is set to null, but if the player takes a new action it will be used to reset time
         reset_time = False
 
@@ -139,8 +203,14 @@ class Rudimentary_AI(player.Player):
                     #select a field
                     if len(all_possible) > 0:
                         #print(all_possible)
-                        chosen_action = self.AI.select_building(all_possible)
-                        print(f"I, player {self.name} have chosen to upgrade {chosen_action}")
+
+                        if Genetic_Test == False:
+                            chosen_action = self.AI.select_building(all_possible)
+                            print(f"I, player {self.name} have chosen to upgrade {chosen_action}")
+                        #above is old functional code, below is new genetic code
+                        else:
+                            info_packet = self.information_packet(i)
+                            chosen_action = self.AI.select_building(all_possible, info_packet)
 
                     #NOW WE'VE CHOSEN SOMETHING TO UPGRADE
                     ##BUT IS IT A BUILDING, OR A FIELD?

@@ -51,14 +51,14 @@ def check_passive():
     return next_action_list
 
 
-def check_players(calc_leaderboard):
+def check_players(calc_leaderboard, i):
     next_action_list = []
 
     global game_counter
     global global_last_active
     for key in player_data.player_dict:
         active_player = player_data.player_dict[key]
-        wait_time = active_player.will_i_act(game_counter, global_last_active, calc_leaderboard)
+        wait_time = active_player.will_i_act(game_counter, global_last_active, calc_leaderboard, i)
         next_action_list.append(wait_time)
 
     return next_action_list
@@ -81,7 +81,7 @@ def simulate_time(i, j):
         leaderboard.new_leaderboard()
     else:
         calc_leaderboard = False
-    x2 = check_players(calc_leaderboard)
+    x2 = check_players(calc_leaderboard, i)
     #now all players have been checked, generate the leaderboard
     #but only if calc_leaderboard is true
     if calc_leaderboard:
