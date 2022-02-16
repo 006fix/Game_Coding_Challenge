@@ -53,10 +53,10 @@ def provide_ai_gentest(randint, owning_player):
         test_chromosome.append(holdval4)
 
     randchecker = random.randint(1,2)
-    if randchecker == 1:
+    if randchecker >= 0:
         AI_chosen = genetic_AI_possibles[0](owning_player, test_chromosome)
-    if randchecker == 2:
-        AI_chosen = AI_possibles[3](owning_player)
+    #if randchecker == 2:
+        #AI_chosen = AI_possibles[3](owning_player)
     print(f"AI_chosen for player {owning_player} = {AI_chosen}")
 
     return AI_chosen

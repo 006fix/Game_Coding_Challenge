@@ -1,11 +1,42 @@
 
 #import Specific_Functions.Map_Creation as map_creation
+import random
 
 holder_dict = {}
 #because of the order things work, you can't map village data to the player dict until after the player
 #has made their first village. So store it here, then transfer it over later.
 
 player_dict = {}
+
+
+#new function to just generate player lists of a given_size
+letter_list = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',
+               'u', 'v', 'w', 'x', 'y', 'z']
+loc_list = ['+', '-']
+
+def create_players(num_players):
+    name_list = []
+    location_list = []
+    race_list = []
+    for i in range(num_players):
+        letter = i%26
+        name = letter_list[letter] + str(i)
+
+        loc_ran1 = random.randint(0,1)
+        loc_ran2 = random.randint(0,1)
+        loc1 = loc_list[loc_ran1]
+        loc2 = loc_list[loc_ran2]
+        location = [loc1, loc2]
+        race = random.randint(1,3)
+
+        name_list.append(name)
+        location_list.append(location)
+        race_list.append(race)
+
+    return name_list, location_list, race_list
+
+
+
 
 
 #trial data for tests
@@ -131,24 +162,24 @@ player_dict = {}
 
 #semi complex version
 
-player_list = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm']
-loc_list = [
-    ['+', '+'],
-    ['+', '-'],
-    ['-', '+'],
-    ['-', '-'],
-    ['+', '+'],
-    ['+', '-'],
-    ['-', '+'],
-    ['-', '-'],
-    ['+', '+'],
-    ['+', '-'],
-    ['-', '+'],
-    ['-', '-'],
-    ['+', '+']
-]
-
-race_list = [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1]
+# player_list = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm']
+# loc_list = [
+#     ['+', '+'],
+#     ['+', '-'],
+#     ['-', '+'],
+#     ['-', '-'],
+#     ['+', '+'],
+#     ['+', '-'],
+#     ['-', '+'],
+#     ['-', '-'],
+#     ['+', '+'],
+#     ['+', '-'],
+#     ['-', '+'],
+#     ['-', '-'],
+#     ['+', '+']
+# ]
+#
+# race_list = [1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1]
 
 #simpler trial
 
