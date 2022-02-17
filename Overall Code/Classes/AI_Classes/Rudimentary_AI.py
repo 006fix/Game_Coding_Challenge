@@ -9,7 +9,7 @@ import Classes.AI_Classes.Hardcoded_AI.AI_selection as AI_selection
 
 
 class Rudimentary_AI(player.Player):
-    def __init__(self, name, quadrant, race,
+    def __init__(self, name, quadrant, race, chromosome,
                  population=0, attack_points=0, defence_points=0, raid_points=0, culture_points=0,
                  villages=[], AI_type = 'generic'):
         super().__init__(name, quadrant, race,
@@ -17,9 +17,13 @@ class Rudimentary_AI(player.Player):
         ##insertion of the AI class chosen will go here, in the instantiation of the rudimentary ai class
         ai_seed_topval = AI_selection.numeric_ai_possibles
         ai_seed = random.randint(0, ai_seed_topval)
+
+
         ##genetic algorithm testing modification
         #self.AI = AI_selection.provide_ai(ai_seed, self.name)
-        self.AI = AI_selection.provide_ai_gentest(ai_seed, self.name)
+        #further modification to run genetic algorithms
+        #self.AI = AI_selection.provide_ai_gentest(ai_seed, self.name)
+        self.AI = AI_selection.provide_ai_genloop(chromosome, self.name)
 
 
     #THIS IS THE GENERIC "REFRESH YOURSELF TO THE PRESENT TIME" FUNCTION

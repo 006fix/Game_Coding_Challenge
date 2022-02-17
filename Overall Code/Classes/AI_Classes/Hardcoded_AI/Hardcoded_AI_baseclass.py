@@ -1,6 +1,7 @@
 
 #base class used as generic structure for all hardcoded AI's
 
+#test
 
 class Underlying_Hardcoded():
     def __init__(self, owning_player):

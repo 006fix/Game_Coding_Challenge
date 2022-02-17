@@ -60,3 +60,24 @@ def provide_ai_gentest(randint, owning_player):
     print(f"AI_chosen for player {owning_player} = {AI_chosen}")
 
     return AI_chosen
+
+#new function for genetic algorithm breeding
+
+def provide_ai_genloop(chromosome, owning_player):
+    if chromosome == 0:
+        test_chromosome = []
+        for i in range(84):
+            holdval1 = random.randint(0, 4)
+            holdval2 = round(2 * random.random(), 3)
+            holdval3 = round(3 * random.random(), 3)
+            holdval4 = random.randint(1, 10) / 10
+            test_chromosome.append(holdval1)
+            test_chromosome.append(holdval2)
+            test_chromosome.append(holdval3)
+            test_chromosome.append(holdval4)
+        AI_chosen = genetic_AI_possibles[0](owning_player, test_chromosome)
+    else:
+        AI_chosen = genetic_AI_possibles[0](owning_player, chromosome)
+    print(f"AI_chosen for player {owning_player} = {AI_chosen}")
+
+    return AI_chosen
