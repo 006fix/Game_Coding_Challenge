@@ -78,7 +78,7 @@ class Rudimentary_AI(player.Player):
         if upgrade_time != []:
             self.next_action = upgrade_time
         else:
-            self.next_action = 20000  #wait a little while then check again
+            self.next_action = 5000  #wait a little while then check again
         print(f"player {self.name} will awaken in {self.next_action} seconds")
 
     #this function will be used by the genetic algorithm, generating an up to date list of all information

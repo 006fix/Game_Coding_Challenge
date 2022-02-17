@@ -22,7 +22,7 @@ output_cp = []
 new_generation = 0
 
 #create a loop to run the genetic algorithm
-num_generations = 50
+num_generations = 100
 for gen in range(num_generations):
     #reset the game data
     move_time.game_counter = 0
@@ -43,11 +43,11 @@ for gen in range(num_generations):
     populate_players.update_player_dict()
 
     #now lets try running time
-    for i in range(1001):
+    for i in range(20001):
         print(i)
         #modification of the simulate_time function to allow for leaderboard calculation every x turns
         #j serves as the i%j modifier, such that this will trigger every j turns
-        j = 1000
+        j = 15000
         move_time.simulate_time(i, j)
 
     #print(leaderboard_data.rank_pop_base)
@@ -65,14 +65,35 @@ for gen in range(num_generations):
     output_cp.append(results[1][0])
     output_res.append(results[2][0])
 
-plt.plot(output_pop)
-plt.title("Population")
-plt.show()
-plt.plot(output_cp)
-plt.title("Culture Points")
-plt.show()
-plt.plot(output_res)
-plt.title("Resources")
-plt.show()
+    outpath1 = r"C:\Users\pyeac\Desktop\Travian_Game\Output_Charts"
+    outpath2 = r"\test2"
+    outpath3 = r"\Genetic"
+
+    savepath = outpath1+outpath2+outpath3+r"\\"
+
+    #save figs every 10 runs
+    if (gen%10 == 0) or (gen == num_generations-1):
+        pop_name = "Population" + str(gen)
+        cp_name = "Culture Points" + str(gen)
+        res_name = "Resources" + str(gen)
+        plt.plot(output_pop)
+        plt.title(pop_name)
+        plt.savefig(savepath+pop_name+".png")
+        plt.clf()
+        plt.plot(output_cp)
+        plt.title(cp_name)
+        plt.savefig(savepath+cp_name + ".png")
+        plt.clf()
+        plt.plot(output_res)
+        plt.title(res_name)
+        plt.savefig(savepath+res_name + ".png")
+        plt.clf()
+
+
+##output final results
+textfile = open("test_text_file.txt", "w")
+for element in new_generation:
+    textfile.write(str(element) + "\n")
+textfile.close()
 
 
