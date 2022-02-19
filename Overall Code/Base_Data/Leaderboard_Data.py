@@ -23,13 +23,19 @@ outpath2 = r"\test2"
 outpath3_list = [r"\Aggregate", r"\Specific"]
 #we'll also generate more outpath variables later, to store the various varietities
 
+
+
 def new_leaderboard():
     global leaderboard
+    global move_history
     leaderboard = []
+    move_history = {}
 
 
-def produce_leaderboard(leaderboard, i):
+
+def produce_leaderboard(leaderboard, i, move_history, gen):
     global leaderboard_df
+    move_dataset = move_history
     new_leaderboard()
     leaderboard_df = pd.DataFrame(leaderboard)
     leaderboard_df.columns = leaderboard_base
@@ -42,6 +48,15 @@ def produce_leaderboard(leaderboard, i):
         instantiate_chart_base(leaderboard_df)
         instantiate_charts(charts_base)
     produce_charts(leaderboard_df, i)
+
+    #extra code to output move history
+    source_string = "player_build_order_gen_" + str(gen) + ".txt"
+    textfile = open(source_string, "w")
+    for key in move_dataset:
+        outfile = move_dataset[key]
+        textfile.write(key + "\n")
+        textfile.write(str(outfile) + "\n")
+    textfile.close()
 
 def instantiate_chart_base(leaderboard_df):
     global charts_base
@@ -169,3 +184,4 @@ def produce_final_outputs():
             plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05), shadow=True, ncol=4)
             plt.savefig(final_outpath, bbox_inches='tight')
             plt.clf()
+

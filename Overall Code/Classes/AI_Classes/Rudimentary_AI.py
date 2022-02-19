@@ -25,6 +25,10 @@ class Rudimentary_AI(player.Player):
         #self.AI = AI_selection.provide_ai_gentest(ai_seed, self.name)
         self.AI = AI_selection.provide_ai_genloop(chromosome, self.name)
 
+        #new functions to provide turn counts, and dictionary of all completed actions
+        self.turn_count = 1
+        self.building_history = {}
+
 
     #THIS IS THE GENERIC "REFRESH YOURSELF TO THE PRESENT TIME" FUNCTION
     #time is required to allow for cp calculations
@@ -133,7 +137,7 @@ class Rudimentary_AI(player.Player):
         stored = active_village.stored
         for res in stored:
             info_packet.append(res)
-        info_packet.append(i)
+        info_packet.append(self.turn_count)
 
         return info_packet
 
@@ -208,6 +212,14 @@ class Rudimentary_AI(player.Player):
                         info_packet = self.information_packet(i)
                         chosen_action = self.AI.select_building(all_possible, info_packet)
 
+                        action_key = self.turn_count
+                        if len(chosen_action) == 3:
+                            action_content = chosen_action[1:]
+                        else:
+                            action_content = chosen_action
+                        self.building_history[action_key] = action_content
+                        self.turn_count = action_key + 1
+
                     #NOW WE'VE CHOSEN SOMETHING TO UPGRADE
                     ##BUT IS IT A BUILDING, OR A FIELD?
                     #we'll use "if in buildings then building else field" to handle this
@@ -263,42 +275,47 @@ class Rudimentary_AI(player.Player):
         #BUT, this will need to be checked to ensure it doesn't accidentally trigger other functions that affect time
         if calc_leaderboard == True:
             self.update_self(game_counter)
-        #new code to update the leaderboard initially
-        self_pop = 0
-        self_cp = 0
-        self_resources = [0, 0, 0, 0]
-        perc_stored = [0, 0, 0, 0]
-        aggregate_income = 0
-        aggregate_over80 = 0
-        #for now, just write out of the self.attack/defenece/raid - later these will need to be updates
-        attack = self.attack_points
-        defence = self.defence_points
-        raid_points = self.raid_points
-        for village in self.villages:
-            active_village = map_data.map_dict[village]
-            #get_pop
-            vil_pop = active_village.pop
-            # get_cp
-            vil_cp = active_village.cp
-            self_pop += vil_pop
-            self_cp += vil_cp
-            income = active_village.yield_calc()
-            for res_type in range(len(income)):
-                self_resources[res_type] += income[res_type]
-            storage_cap = active_village.storage_cap
-            current_resources = active_village.stored
-            #now get % storage utilised
-            #LOCAL ONLY
-            for checking_caps in range(len(current_resources)):
-                perc_usage = current_resources[checking_caps] / storage_cap[checking_caps]
-                perc_stored[checking_caps] = perc_usage
-            for zz in range(len(current_resources)):
-                aggregate_income += income[zz]
+            #new code to update the leaderboard initially
+            self_pop = 0
+            self_cp = 0
+            self_resources = [0, 0, 0, 0]
+            perc_stored = [0, 0, 0, 0]
+            aggregate_income = 0
+            aggregate_over80 = 0
+            #for now, just write out of the self.attack/defenece/raid - later these will need to be updates
+            attack = self.attack_points
+            defence = self.defence_points
+            raid_points = self.raid_points
+            for village in self.villages:
+                active_village = map_data.map_dict[village]
+                #get_pop
+                vil_pop = active_village.pop
+                # get_cp
+                vil_cp = active_village.cp
+                self_pop += vil_pop
+                self_cp += vil_cp
+                income = active_village.yield_calc()
+                for res_type in range(len(income)):
+                    self_resources[res_type] += income[res_type]
+                storage_cap = active_village.storage_cap
+                current_resources = active_village.stored
+                #now get % storage utilised
+                #LOCAL ONLY
+                for checking_caps in range(len(current_resources)):
+                    perc_usage = current_resources[checking_caps] / storage_cap[checking_caps]
+                    perc_stored[checking_caps] = perc_usage
+                for zz in range(len(current_resources)):
+                    aggregate_income += income[zz]
 
 
-        self_data = [self.name, self.AI.name, self_pop, self_cp, self.attack_points, self.defence_points, self.raid_points,
-                     self_resources, aggregate_income, perc_stored]
-        leaderboard.leaderboard.append(self_data)
+            self_data = [self.name, self.AI.name, self_pop, self_cp, self.attack_points, self.defence_points, self.raid_points,
+                         self_resources, aggregate_income, perc_stored]
+            leaderboard.leaderboard.append(self_data)
+            #extra step to provide their building history to the leaderboard
+            build_order_key = self.name
+            build_order_data = self.building_history
+            leaderboard.move_history[build_order_key] = build_order_data
+
 
         return true_wait_time
 
