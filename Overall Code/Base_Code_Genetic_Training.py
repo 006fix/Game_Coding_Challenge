@@ -22,7 +22,7 @@ output_cp = []
 new_generation = 0
 
 #create a loop to run the genetic algorithm
-num_generations = 10
+num_generations = 50
 for gen in range(num_generations):
     #reset the game data
     move_time.game_counter = 0
@@ -43,14 +43,15 @@ for gen in range(num_generations):
     populate_players.update_player_dict()
 
     #variable to control the number of turns
-    num_turns = 5001
+    num_turns = 1001
+    # j serves as the i%j modifier, such that this will trigger every j turns
+    # modified here to simply output once, at the very end
+    j = num_turns - 1
 
     #now lets try running time
     for i in range(num_turns):
         print(i)
         #modification of the simulate_time function to allow for leaderboard calculation every x turns
-        #j serves as the i%j modifier, such that this will trigger every j turns
-        j = 5000
         move_time.simulate_time(i, j, gen)
 
     #lets output our players and their build orders:

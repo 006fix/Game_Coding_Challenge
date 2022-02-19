@@ -58,6 +58,87 @@ def produce_leaderboard(leaderboard, i, move_history, gen):
         textfile.write(str(outfile) + "\n")
     textfile.close()
 
+    best_pop = leaderboard_df.loc[leaderboard_df['pop_rank'].idxmax()]['name']
+    best_cp = leaderboard_df.loc[leaderboard_df['cp_rank'].idxmax()]['name']
+    best_res = leaderboard_df.loc[leaderboard_df['res_rank'].idxmax()]['name']
+    best_total = leaderboard_df.loc[leaderboard_df['total_rank'].idxmax()]['name']
+
+    pop_string = "best_pop_per_gen" + ".txt"
+    cp_string = "best_cp_per_gen" + ".txt"
+    res_string = "best_res_per_gen" + ".txt"
+    total_string = "best_total_per_gen" + ".txt"
+
+    #only need to try one of them to know what to do
+    try:
+        textfile = open(pop_string)
+        file_exists = True
+    except:
+        file_exists = False
+
+    if file_exists:
+        for key in move_dataset:
+            if key == best_pop:
+                textfile = open(pop_string, "a")
+                outfile = move_dataset[key]
+                header = f"This is gen {gen}"
+                textfile.write(header + "\n")
+                textfile.write(str(outfile) + "\n")
+                textfile.close()
+            if key == best_cp:
+                textfile = open(cp_string, "a")
+                outfile = move_dataset[key]
+                header = f"This is gen {gen}"
+                textfile.write(header + "\n")
+                textfile.write(str(outfile) + "\n")
+                textfile.close()
+            if key == best_res:
+                textfile = open(res_string, "a")
+                outfile = move_dataset[key]
+                header = f"This is gen {gen}"
+                textfile.write(header + "\n")
+                textfile.write(str(outfile) + "\n")
+                textfile.close()
+            if key == best_total:
+                textfile = open(total_string, "a")
+                outfile = move_dataset[key]
+                header = f"This is gen {gen}"
+                textfile.write(header + "\n")
+                textfile.write(str(outfile) + "\n")
+                textfile.close()
+    else:
+        for key in move_dataset:
+            if key == best_pop:
+                textfile = open(pop_string, "w")
+                outfile = move_dataset[key]
+                header = f"This is gen {gen}"
+                textfile.write(header + "\n")
+                textfile.write(str(outfile) + "\n")
+                textfile.close()
+            if key == best_cp:
+                textfile = open(cp_string, "w")
+                outfile = move_dataset[key]
+                header = f"This is gen {gen}"
+                textfile.write(header + "\n")
+                textfile.write(str(outfile) + "\n")
+                textfile.close()
+            if key == best_res:
+                textfile = open(res_string, "w")
+                outfile = move_dataset[key]
+                header = f"This is gen {gen}"
+                textfile.write(header + "\n")
+                textfile.write(str(outfile) + "\n")
+                textfile.close()
+            if key == best_total:
+                textfile = open(total_string, "w")
+                outfile = move_dataset[key]
+                header = f"This is gen {gen}"
+                textfile.write(header + "\n")
+                textfile.write(str(outfile) + "\n")
+                textfile.close()
+
+
+
+
 def instantiate_chart_base(leaderboard_df):
     global charts_base
     charts_base = leaderboard_df[['name', 'AI_name']]

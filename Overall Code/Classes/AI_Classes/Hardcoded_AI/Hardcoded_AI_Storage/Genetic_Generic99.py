@@ -75,11 +75,20 @@ class Genetic_Generic_1(baseclass.Underlying_Hardcoded):
 
         current_best = 0
         current_choice = 0
+        #setting this as negative 42 because buildings start at level 0 and i need to compare
+        current_level = -42
         for building in all_possible:
             utility_val = self.evaluate_utility(building, info_packet)
-            if utility_val > current_best:
-                current_best = utility_val
-                current_choice = building
+            if utility_val >= current_best:
+                if current_level != -42:
+                    if building[-1] < current_level:
+                        current_best = utility_val
+                        current_choice = building
+                        current_level = building[-1]
+                else:
+                    current_best = utility_val
+                    current_choice = building
+                    current_level = building[-1]
 
         #control for cases where it defaults to a value of 0
         if current_choice == 0:
