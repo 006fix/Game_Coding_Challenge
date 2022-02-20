@@ -15,7 +15,7 @@ import Base_Data.map_data as map_data
 #trial
 
 #num players
-num_players = 90
+num_players = 520
 output_pop = []
 output_res = []
 output_cp = []
@@ -46,7 +46,7 @@ for gen in range(num_generations):
     #variable to control the number of turns
     #this is likely depreciated with the modification of the game to run for a given number of seconds
     #therefore, we will now retain it, but at a high number, and add a new variable below
-    num_turns = 101
+    num_turns = 200001
     # j serves as the i%j modifier, such that this will trigger every j turns
     j=100
     # modified here to simply output once, at the very end
@@ -54,7 +54,7 @@ for gen in range(num_generations):
 
 
     #new variable for game length
-    num_seconds = 86400
+    num_seconds = 8000
 
     #now lets try running time
     for i in range(num_turns):
@@ -68,7 +68,7 @@ for gen in range(num_generations):
 
     #print(leaderboard_data.rank_pop_base)
     #print(leaderboard_data.raw_pop_base)
-    produce_graphs = False
+    produce_graphs = True
 
     if produce_graphs:
         leaderboard_data.produce_final_outputs()
@@ -88,10 +88,10 @@ for gen in range(num_generations):
     savepath = outpath1+outpath2+outpath3+r"\\"
 
     #save figs every 10 runs
-    if (gen%10 == 0) or (gen == num_generations-1):
-        pop_name = "Population" + str(gen)
-        cp_name = "Culture Points" + str(gen)
-        res_name = "Resources" + str(gen)
+    if (gen%1 == 0) or (gen == num_generations-1):
+        pop_name = "Population"
+        cp_name = "Culture Points"
+        res_name = "Resources"
         plt.plot(output_pop)
         plt.title(pop_name)
         plt.savefig(savepath+pop_name+".png")
@@ -106,98 +106,98 @@ for gen in range(num_generations):
         plt.clf()
 
 
-        # extra code to output move history
-        move_dataset = {}
-        for key in player_data.player_dict:
-            active_player = player_data.player_dict[key]
-            move_dataset[key] = active_player.building_history
+    # extra code to output move history
+    move_dataset = {}
+    for key in player_data.player_dict:
+        active_player = player_data.player_dict[key]
+        move_dataset[key] = active_player.building_history
 
 
-        source_string = "player_build_order_gen_" + str(gen) + ".txt"
-        textfile = open(source_string, "w")
+    source_string = "player_build_order_gen_" + str(gen) + ".txt"
+    textfile = open(source_string, "w")
+    for key in move_dataset:
+        outfile = move_dataset[key]
+        textfile.write(key + "\n")
+        textfile.write(str(outfile) + "\n")
+    textfile.close()
+
+    best_pop = leaderboard.leaderboard_df.loc[leaderboard.leaderboard_df['pop_rank'].idxmax()]['name']
+    best_cp = leaderboard.leaderboard_df.loc[leaderboard.leaderboard_df['cp_rank'].idxmax()]['name']
+    best_res = leaderboard.leaderboard_df.loc[leaderboard.leaderboard_df['res_rank'].idxmax()]['name']
+    best_total = leaderboard.leaderboard_df.loc[leaderboard.leaderboard_df['total_rank'].idxmax()]['name']
+
+    pop_string = "best_pop_per_gen" + ".txt"
+    cp_string = "best_cp_per_gen" + ".txt"
+    res_string = "best_res_per_gen" + ".txt"
+    total_string = "best_total_per_gen" + ".txt"
+
+    # only need to try one of them to know what to do
+    try:
+        textfile = open(pop_string)
+        file_exists = True
+    except:
+        file_exists = False
+
+    if file_exists:
         for key in move_dataset:
-            outfile = move_dataset[key]
-            textfile.write(key + "\n")
-            textfile.write(str(outfile) + "\n")
-        textfile.close()
-
-        best_pop = leaderboard.leaderboard_df.loc[leaderboard.leaderboard_df['pop_rank'].idxmax()]['name']
-        best_cp = leaderboard.leaderboard_df.loc[leaderboard.leaderboard_df['cp_rank'].idxmax()]['name']
-        best_res = leaderboard.leaderboard_df.loc[leaderboard.leaderboard_df['res_rank'].idxmax()]['name']
-        best_total = leaderboard.leaderboard_df.loc[leaderboard.leaderboard_df['total_rank'].idxmax()]['name']
-
-        pop_string = "best_pop_per_gen" + ".txt"
-        cp_string = "best_cp_per_gen" + ".txt"
-        res_string = "best_res_per_gen" + ".txt"
-        total_string = "best_total_per_gen" + ".txt"
-
-        # only need to try one of them to know what to do
-        try:
-            textfile = open(pop_string)
-            file_exists = True
-        except:
-            file_exists = False
-
-        if file_exists:
-            for key in move_dataset:
-                if key == best_pop:
-                    textfile = open(pop_string, "a")
-                    outfile = move_dataset[key]
-                    header = f"This is gen {gen}"
-                    textfile.write(header + "\n")
-                    textfile.write(str(outfile) + "\n")
-                    textfile.close()
-                if key == best_cp:
-                    textfile = open(cp_string, "a")
-                    outfile = move_dataset[key]
-                    header = f"This is gen {gen}"
-                    textfile.write(header + "\n")
-                    textfile.write(str(outfile) + "\n")
-                    textfile.close()
-                if key == best_res:
-                    textfile = open(res_string, "a")
-                    outfile = move_dataset[key]
-                    header = f"This is gen {gen}"
-                    textfile.write(header + "\n")
-                    textfile.write(str(outfile) + "\n")
-                    textfile.close()
-                if key == best_total:
-                    textfile = open(total_string, "a")
-                    outfile = move_dataset[key]
-                    header = f"This is gen {gen}"
-                    textfile.write(header + "\n")
-                    textfile.write(str(outfile) + "\n")
-                    textfile.close()
-        else:
-            for key in move_dataset:
-                if key == best_pop:
-                    textfile = open(pop_string, "w")
-                    outfile = move_dataset[key]
-                    header = f"This is gen {gen}"
-                    textfile.write(header + "\n")
-                    textfile.write(str(outfile) + "\n")
-                    textfile.close()
-                if key == best_cp:
-                    textfile = open(cp_string, "w")
-                    outfile = move_dataset[key]
-                    header = f"This is gen {gen}"
-                    textfile.write(header + "\n")
-                    textfile.write(str(outfile) + "\n")
-                    textfile.close()
-                if key == best_res:
-                    textfile = open(res_string, "w")
-                    outfile = move_dataset[key]
-                    header = f"This is gen {gen}"
-                    textfile.write(header + "\n")
-                    textfile.write(str(outfile) + "\n")
-                    textfile.close()
-                if key == best_total:
-                    textfile = open(total_string, "w")
-                    outfile = move_dataset[key]
-                    header = f"This is gen {gen}"
-                    textfile.write(header + "\n")
-                    textfile.write(str(outfile) + "\n")
-                    textfile.close()
+            if key == best_pop:
+                textfile = open(pop_string, "a")
+                outfile = move_dataset[key]
+                header = f"This is gen {gen}"
+                textfile.write(header + "\n")
+                textfile.write(str(outfile) + "\n")
+                textfile.close()
+            if key == best_cp:
+                textfile = open(cp_string, "a")
+                outfile = move_dataset[key]
+                header = f"This is gen {gen}"
+                textfile.write(header + "\n")
+                textfile.write(str(outfile) + "\n")
+                textfile.close()
+            if key == best_res:
+                textfile = open(res_string, "a")
+                outfile = move_dataset[key]
+                header = f"This is gen {gen}"
+                textfile.write(header + "\n")
+                textfile.write(str(outfile) + "\n")
+                textfile.close()
+            if key == best_total:
+                textfile = open(total_string, "a")
+                outfile = move_dataset[key]
+                header = f"This is gen {gen}"
+                textfile.write(header + "\n")
+                textfile.write(str(outfile) + "\n")
+                textfile.close()
+    else:
+        for key in move_dataset:
+            if key == best_pop:
+                textfile = open(pop_string, "w")
+                outfile = move_dataset[key]
+                header = f"This is gen {gen}"
+                textfile.write(header + "\n")
+                textfile.write(str(outfile) + "\n")
+                textfile.close()
+            if key == best_cp:
+                textfile = open(cp_string, "w")
+                outfile = move_dataset[key]
+                header = f"This is gen {gen}"
+                textfile.write(header + "\n")
+                textfile.write(str(outfile) + "\n")
+                textfile.close()
+            if key == best_res:
+                textfile = open(res_string, "w")
+                outfile = move_dataset[key]
+                header = f"This is gen {gen}"
+                textfile.write(header + "\n")
+                textfile.write(str(outfile) + "\n")
+                textfile.close()
+            if key == best_total:
+                textfile = open(total_string, "w")
+                outfile = move_dataset[key]
+                header = f"This is gen {gen}"
+                textfile.write(header + "\n")
+                textfile.write(str(outfile) + "\n")
+                textfile.close()
 
 
 ##output final results

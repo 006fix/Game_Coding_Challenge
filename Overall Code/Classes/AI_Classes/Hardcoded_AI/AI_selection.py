@@ -67,10 +67,10 @@ def provide_ai_genloop(chromosome, owning_player):
     if chromosome == 0:
         test_chromosome = []
         for i in range(84):
-            holdval1 = random.randint(0, 4)
-            holdval2 = round(2 * random.random(), 3)
-            holdval3 = round(3 * random.random(), 3)
-            holdval4 = random.randint(1, 10) / 10
+            holdval1 = random.uniform(0.1, 250)
+            holdval2 = random.uniform(0.1, 5)
+            holdval3 = random.uniform(0.1, 5)
+            holdval4 = random.uniform(0.1, 250)
             test_chromosome.append(holdval1)
             test_chromosome.append(holdval2)
             test_chromosome.append(holdval3)

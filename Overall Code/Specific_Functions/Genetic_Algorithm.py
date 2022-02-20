@@ -30,20 +30,23 @@ def genetic_prerun():
     num_elite = 10
 
     #define the breeding candidates
-    num_breeding = 20
+    num_breeding = 30
 
     #input file
     input_data = leaderboard_data.leaderboard_df[['name', 'res_rank']]
+    input_data2 = input_data.sort_values(by='res_rank', ascending = False)
 
     #select our elite_rank names
-    elite_candidates2 = input_data.sort_values(by='res_rank', ascending=False)
-    elite_candidates3 = elite_candidates2.head(num_elite)
+    elite_candidates3 = input_data2.head(num_elite)
     elite_names = list(elite_candidates3['name'])
 
     #select our breeding_candidate names
-    breeding_candidates2 = input_data.sort_values(by='res_rank', ascending=False)
-    breeding_candidates3 = breeding_candidates2.head(num_breeding)
+    breeding_candidates3 = input_data2.head(num_breeding)
     breeding_names = list(breeding_candidates3['name'])
+
+    #control for if the above hasn't worked
+    if (len(elite_names) != num_elite) or (len(breeding_names) != num_breeding):
+        raise ValueError("An improper number of candidates have been created, please rectify")
 
     #find our best candidate for pop, res, and cp
     input_data2 = leaderboard_data.leaderboard_df[['name', 'pop', 'cp', 'single_num_res']]
@@ -63,23 +66,25 @@ def genetic_prerun():
     output_data = [pop_val, cp_val, res_val]
 
 
-    ###harcoded fix just to force this stupid thing to work properly
-    if len(elite_names) != 10:
-        if len(elite_names) > 10:
-            elite_names = elite_names[:10]
-        else:
-            diff = 10 - len(elite_names)
-            for fix in range(diff):
-                holdval = elite_names[-1]
-                elite_names.append(holdval)
-    if len(breeding_names) != 20:
-        if len(breeding_names) > 20:
-            breeding_names = breeding_names[:20]
-        else:
-            diff = 20 - len(breeding_names)
-            for fix in range(diff):
-                holdval = breeding_names[-1]
-                breeding_names.append(holdval)
+    #remove later if not needed
+
+    # ###harcoded fix just to force this stupid thing to work properly
+    # if len(elite_names) != 10:
+    #     if len(elite_names) > 10:
+    #         elite_names = elite_names[:10]
+    #     else:
+    #         diff = 10 - len(elite_names)
+    #         for fix in range(diff):
+    #             holdval = elite_names[-1]
+    #             elite_names.append(holdval)
+    # if len(breeding_names) != 20:
+    #     if len(breeding_names) > 20:
+    #         breeding_names = breeding_names[:20]
+    #     else:
+    #         diff = 20 - len(breeding_names)
+    #         for fix in range(diff):
+    #             holdval = breeding_names[-1]
+    #             breeding_names.append(holdval)
 
 
 
@@ -127,7 +132,7 @@ def breed_candidates(chromosome1, chromosome2):
     return child1, child2
 
 def create_population(chromosome_dict, elite_candidates):
-    split_num = 10
+    split_num = int(len(chromosome_dict)/2)
     output_population = []
     holder_population = []
     intermediary_population = []
@@ -135,46 +140,34 @@ def create_population(chromosome_dict, elite_candidates):
         holder_population.append(chromosome_dict[key])
         if key in elite_candidates:
             output_population.append(chromosome_dict[key])
-    random.shuffle(holder_population)
-    list1 = holder_population[:split_num]
-    list2 = holder_population[split_num:]
-    random.shuffle(holder_population)
-    list3 = holder_population[:split_num]
-    list4 = holder_population[split_num:]
-    #generate first set of children
-    for i in range(len(list1)):
-        child1, child2 = breed_candidates(list1[i], list2[i])
-        intermediary_population.append(child1)
-        intermediary_population.append(child2)
-    for i in range(len(list3)):
-        child1, child2 = breed_candidates(list3[i], list4[i])
-        intermediary_population.append(child1)
-        intermediary_population.append(child2)
+
+    for j in range(17):
+        random.shuffle(holder_population)
+        list1 = holder_population[:split_num]
+        list2 = holder_population[split_num:]
+        for i in range(len(list1)):
+            child1, child2 = breed_candidates(list1[i], list2[i])
+            intermediary_population.append(child1)
+            intermediary_population.append(child2)
 
     #now mutate the children
     #twice
+    #why on earth was i doing this twice???
 
-    for mut_loop in range(2):
-        for chromosome in intermediary_population:
-            holder_chromosome = []
-            for val in chromosome:
-                checkval = random.randint(1,100)
-                if checkval > 98:
-                    newval = round(random.gauss(val, (val / 2)), 3)
-                    holder_chromosome.append(newval)
-                else:
-                    holder_chromosome.append(val)
-            output_population.append(holder_chromosome)
+    for chromosome in intermediary_population:
+        holder_chromosome = []
+        for val in chromosome:
+            checkval = random.randint(1,100)
+            if checkval > 98:
+                newval = round(val * random.uniform(0.95, 1.05), 3)
+                holder_chromosome.append(newval)
+            else:
+                holder_chromosome.append(val)
+        output_population.append(holder_chromosome)
 
 
-    #control to account for the fact that this CONSTANTLY returns cases where there's the wrong number of chromosomes
-    #if len(output_population) != num players, then pad it with the final value
-
-    if len(output_population) != 9*len(elite_candidates):
-        diff = (9*len(elite_candidates)) - len(output_population)
-        for stupid_fix in range(diff):
-            holdval = output_population[-1]
-            output_population.append(holdval)
+    if len(output_population) != 520:
+        raise ValueError("Why has this returned the wrong number of chromosomes")
 
     return output_population
 
