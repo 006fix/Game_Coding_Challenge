@@ -66,15 +66,22 @@ def check_players(calc_leaderboard, i):
 
 #i = game iteration
 #j = i%j, so leaderboard update triggers every j turns
-def simulate_time(i, j, gen):
+def simulate_time(i, j, num_seconds):
     global game_counter
     global time_will_elapse
     global turn_counter
     set_time_elapsed()
+
+    if game_counter > num_seconds:
+        keep_going = False
+        check_var = game_counter
+    else:
+        keep_going = True
+
     game_counter = game_counter + time_elapsed
     x1 = check_passive()
     #modification of the check_players function to allow for variance every x turns to allow for leaderboard generation
-    if (i%j == 0) and (i>0):
+    if ((i%j == 0) and (i>0)) or keep_going == False:
         print(f"UPDATE OF THE LEADERBOARD HAS COMMENCED")
         calc_leaderboard = True
         #refresh the leaderboard
@@ -85,7 +92,7 @@ def simulate_time(i, j, gen):
     #now all players have been checked, generate the leaderboard
     #but only if calc_leaderboard is true
     if calc_leaderboard:
-        leaderboard.produce_leaderboard(leaderboard.leaderboard, i, leaderboard.move_history, gen)
+        leaderboard.produce_leaderboard(leaderboard.leaderboard, i)
         print(leaderboard.leaderboard_df)
     #resumption of old code
     x3 = x1 + x2
@@ -101,4 +108,7 @@ def simulate_time(i, j, gen):
     print(f"the current game duration is {game_counter}")
     print(f"the game will resume in {min_elapsed} seconds")
     print(f"there have been {turn_counter} turns so far")
+
+
+    return keep_going
 
