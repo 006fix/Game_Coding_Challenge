@@ -94,6 +94,21 @@ def produce_charts(leaderboard_df, i):
     rank_res_base = pd.merge(rank_res_base, leaderboard_df[['name', 'res_rank']], on='name', how='left')
     total_rank_base = pd.merge(total_rank_base, leaderboard_df[['name', 'total_rank']], on='name', how='left')
 
+    #now sort these lists
+    raw_pop_base.sort_values(by=raw_pop_base.columns[-1], ascending=False, inplace=True)
+    raw_cp_base.sort_values(by=raw_cp_base.columns[-1], ascending=False, inplace=True)
+    raw_res_base.sort_values(by=raw_res_base.columns[-1], ascending=False, inplace=True)
+    rank_pop_base.sort_values(by=rank_pop_base.columns[-1], ascending=False, inplace=True)
+    rank_cp_base.sort_values(by=rank_cp_base.columns[-1], ascending=False, inplace=True)
+    rank_res_base.sort_values(by=rank_res_base.columns[-1], ascending=False, inplace=True)
+    total_rank_base.sort_values(by=total_rank_base.columns[-1], ascending=False, inplace=True)
+
+
+
+
+    #ok - tried to remove these, it doesn't work
+    #basically, as time moves on, extra columns are added to each of these charts
+    #so this code just renames the new column to the turn count, to avoid dupes
     new_cols = list(raw_pop_base.columns)
     new_cols[-1] = new_label
     raw_pop_base.columns = new_cols
@@ -156,6 +171,9 @@ def produce_final_outputs():
         for j in range(len(unique_vals)):
             active_table = tables_list[i].loc[tables_list[i]['AI_name'] == unique_vals[j]]
             del active_table['AI_name']
+            #small modificiation to limit it to only output the top 10 for that specific table
+            if len(active_table.index) > 10:
+                active_table = active_table.head(10)
             table_title = tables_list_names[i] + unique_vals[j]
             table_name = tables_list_names[i] + str(j)
             final_outpath = outpath1 + outpath2 + outpath3_active + r"\\" + table_name + ".png"

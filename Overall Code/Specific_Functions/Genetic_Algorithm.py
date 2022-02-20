@@ -24,25 +24,63 @@ import random
 
 def genetic_prerun():
 
+    #this lets us use pop size way down as a control
+    global pop_size
+
     #the following two numbers are defined as such since higher = better
 
     #define the elite candidates
     num_elite = 10
 
     #define the breeding candidates
-    num_breeding = 30
+    num_breeding = 60
+
+    #define the population size
+    #(this is currently 9*num_breeding + num_elite)
+    pop_size = 550
 
     #input file
-    input_data = leaderboard_data.leaderboard_df[['name', 'res_rank']]
-    input_data2 = input_data.sort_values(by='res_rank', ascending = False)
+    input_data = leaderboard_data.leaderboard_df[['name', 'res_rank', 'cp_rank']]
+    input_data2 = input_data.sort_values(by=['res_rank', 'cp_rank'], ascending = [False, False])
 
+    #new variation to attempt to preferentially select for diversity as well as score
+    #old code commented out below
+
+    #get all names in sorted order
+    all_names = list(input_data2['name'])
+    #create a storage file to hold series of actions used
+    currently_used_actions = []
+    #and some to hold the names of elites and breeders
+    elite_names = []
+    breeding_names = []
+    #now loop through names one by one, pull out their actions, check the list, if not present, use
+    #use a while loop
+    keep_looking = True
+    index_counter = 0
+    while keep_looking:
+        #control for if we've already found enough
+        if len(breeding_names) == num_breeding:
+            keep_looking = False
+        else:
+            active_name = all_names[index_counter]
+            active_player = player_data.player_dict[active_name]
+            action_list = active_player.building_history
+            if action_list not in currently_used_actions:
+                breeding_names.append(active_name)
+                #also add to the elite if elite < 10
+                if len(elite_names) < num_elite:
+                    elite_names.append(active_name)
+        index_counter += 1
+
+
+    #old code, left to later use, functional code replicating function is above
     #select our elite_rank names
-    elite_candidates3 = input_data2.head(num_elite)
-    elite_names = list(elite_candidates3['name'])
+    #elite_candidates3 = input_data2.head(num_elite)
+    #elite_names = list(elite_candidates3['name'])
 
     #select our breeding_candidate names
-    breeding_candidates3 = input_data2.head(num_breeding)
-    breeding_names = list(breeding_candidates3['name'])
+    #breeding_candidates3 = input_data2.head(num_breeding)
+    #breeding_names = list(breeding_candidates3['name'])
 
     #control for if the above hasn't worked
     if (len(elite_names) != num_elite) or (len(breeding_names) != num_breeding):
@@ -132,6 +170,11 @@ def breed_candidates(chromosome1, chromosome2):
     return child1, child2
 
 def create_population(chromosome_dict, elite_candidates):
+
+    #this is just here for the final control check on chromosome length
+    global pop_size
+
+
     split_num = int(len(chromosome_dict)/2)
     output_population = []
     holder_population = []
@@ -140,8 +183,7 @@ def create_population(chromosome_dict, elite_candidates):
         holder_population.append(chromosome_dict[key])
         if key in elite_candidates:
             output_population.append(chromosome_dict[key])
-
-    for j in range(17):
+    for j in range(9):
         random.shuffle(holder_population)
         list1 = holder_population[:split_num]
         list2 = holder_population[split_num:]
@@ -159,14 +201,14 @@ def create_population(chromosome_dict, elite_candidates):
         for val in chromosome:
             checkval = random.randint(1,100)
             if checkval > 98:
-                newval = round(val * random.uniform(0.95, 1.05), 3)
+                newval = val * random.uniform(0.90, 1.10)
                 holder_chromosome.append(newval)
             else:
                 holder_chromosome.append(val)
         output_population.append(holder_chromosome)
 
 
-    if len(output_population) != 520:
+    if len(output_population) != pop_size:
         raise ValueError("Why has this returned the wrong number of chromosomes")
 
     return output_population

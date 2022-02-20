@@ -15,7 +15,7 @@ import Base_Data.map_data as map_data
 #trial
 
 #num players
-num_players = 520
+num_players = 550
 output_pop = []
 output_res = []
 output_cp = []
@@ -23,7 +23,7 @@ output_cp = []
 new_generation = 0
 
 #create a loop to run the genetic algorithm
-num_generations = 50
+num_generations = 12
 for gen in range(num_generations):
     #reset the game data
     move_time.game_counter = 0
