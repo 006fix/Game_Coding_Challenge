@@ -137,9 +137,16 @@ class Rudimentary_AI(player.Player):
         stored = active_village.stored
         for res in stored:
             info_packet.append(res)
+
         info_packet.append(self.turn_count)
 
-        return info_packet
+        #extra parts for the enhanced info packet
+        yields = active_village.yield_calc()
+        every_building = active_village.all_buildings()
+
+        info_packet2 = [info_packet, yields, every_building]
+
+        return info_packet2
 
 
 
@@ -206,6 +213,8 @@ class Rudimentary_AI(player.Player):
                     all_possible = possible_buildings + possible_fields
 
                     #select a field
+                    # new control for if wait value chosen
+                    wait_value_chosen = False
                     if len(all_possible) > 0:
                         #print(all_possible)
 
@@ -215,8 +224,11 @@ class Rudimentary_AI(player.Player):
                         action_key = self.turn_count
                         if len(chosen_action) == 3:
                             action_content = chosen_action[1:]
-                        else:
+                        elif len(chosen_action) == 2:
                             action_content = chosen_action
+                        else:
+                            wait_value_chosen = True
+                            action_content = chosen_action[0]
                         self.building_history[action_key] = action_content
                         self.turn_count = action_key + 1
 
@@ -228,13 +240,16 @@ class Rudimentary_AI(player.Player):
                             chosen_action_type = 'building'
                         elif chosen_action in possible_fields:
                             chosen_action_type = 'field'
+                        elif chosen_action[0] == "None":
+                            chosen_action_type = 'wait'
                         else:
                             raise ValueError(f"I'm afraid I don't recognise what you're trying to upgrade!!!!")
 
                     #initiate the upgrade
                     #BUT ONLY IF THERE'S NOTHING CURRENTLY UPGRADING
                     if len(active_village.currently_upgrading) == 0:
-                        if len(all_possible) > 0:
+                        #modification for if we're waiting for an action
+                        if (len(all_possible) > 0) or wait_value_chosen:
                             reset_time = True
                             #here we need to vary by chosen_action_type
                             if chosen_action_type == 'building':
@@ -242,6 +257,8 @@ class Rudimentary_AI(player.Player):
                                 wait_time = active_village.upgrade_building(chosen_action[:2])
                             elif chosen_action_type == 'field':
                                 wait_time = active_village.upgrade_field(chosen_action[0])
+                            elif chosen_action_type == 'wait':
+                                wait_time = chosen_action[-1]
                             else:
                                 raise ValueError(f"I don't recognise what i'm upgrading here!")
                             wait_time_list.append(wait_time)
@@ -311,7 +328,6 @@ class Rudimentary_AI(player.Player):
             self_data = [self.name, self.AI.name, self_pop, self_cp, self.attack_points, self.defence_points, self.raid_points,
                          self_resources, aggregate_income, perc_stored]
             leaderboard.leaderboard.append(self_data)
-
 
         return true_wait_time
 

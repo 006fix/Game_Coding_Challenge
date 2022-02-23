@@ -59,7 +59,10 @@ def check_players(calc_leaderboard, i):
     for key in player_data.player_dict:
         active_player = player_data.player_dict[key]
         wait_time = active_player.will_i_act(game_counter, global_last_active, calc_leaderboard, i)
+#        if (wait_time == 20888) and (next_action_list[-1] == 20888):
+#            breakhere = True
         next_action_list.append(wait_time)
+
 
     return next_action_list
 

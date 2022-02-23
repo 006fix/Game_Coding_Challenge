@@ -23,7 +23,7 @@ output_cp = []
 new_generation = 0
 
 #create a loop to run the genetic algorithm
-num_generations = 12
+num_generations = 41
 for gen in range(num_generations):
     #reset the game data
     move_time.game_counter = 0
@@ -46,15 +46,15 @@ for gen in range(num_generations):
     #variable to control the number of turns
     #this is likely depreciated with the modification of the game to run for a given number of seconds
     #therefore, we will now retain it, but at a high number, and add a new variable below
-    num_turns = 200001
+    num_turns = 300001
     # j serves as the i%j modifier, such that this will trigger every j turns
-    j=100
+    j=500
     # modified here to simply output once, at the very end
     #j = num_turns - 1
 
 
     #new variable for game length
-    num_seconds = 8000
+    num_seconds = 600000
 
     #now lets try running time
     for i in range(num_turns):

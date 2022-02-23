@@ -40,8 +40,8 @@ def genetic_prerun():
     pop_size = 550
 
     #input file
-    input_data = leaderboard_data.leaderboard_df[['name', 'res_rank', 'cp_rank']]
-    input_data2 = input_data.sort_values(by=['res_rank', 'cp_rank'], ascending = [False, False])
+    input_data = leaderboard_data.leaderboard_df[['name', 'res_rank', 'cp_rank', 'pop_rank']]
+    input_data2 = input_data.sort_values(by=['res_rank', 'cp_rank', 'pop_rank'], ascending = [False, False, False])
 
     #new variation to attempt to preferentially select for diversity as well as score
     #old code commented out below

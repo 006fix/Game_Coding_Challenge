@@ -174,6 +174,10 @@ class Village(loc_sq.Square):
         crop_usage += building_pop_usage
         #modification ends
         crop_yield -= crop_usage
+
+        if crop_yield == 0:
+            breakhere = True
+
         # now we've got the full yields out, so multiply by time passed
         yields = [wood_yield, clay_yield, iron_yield, crop_yield]
         return yields
@@ -235,7 +239,7 @@ class Village(loc_sq.Square):
             key2 = key[:4]
             upgrade_cost = fields_data.field_dict[key2][holdval_level][0]
             #new addition to handle pop cost
-            upgrade_pop_cost = fields_data.field_dict[key2][level_plusone][2] - fields_data.field_dict[key2][level_plusone][2]
+            upgrade_pop_cost = fields_data.field_dict[key2][level_plusone][2] - fields_data.field_dict[key2][holdval_level][2]
             cond1 = upgrade_cost[0] < self.storage_cap[0]
             cond2 = upgrade_cost[1] < self.storage_cap[1]
             cond3 = upgrade_cost[2] < self.storage_cap[2]
@@ -257,6 +261,52 @@ class Village(loc_sq.Square):
                 possible_buildings[1].append(append_details)
 
         return possible_buildings
+
+    #new function to return every single building, regardless of possibility
+    #with the exception of crop fields which can be built
+    def all_buildings(self):
+        all_buildings = []
+        current_yields = self.yield_calc()
+        current_crop = (3600 * current_yields[3]) - 3
+        for key in self.buildings:
+            holdval = self.buildings[key]
+            #THIS IS ALSO JUST TO STOP IT BREAKING FROM THE NULL VALUES in the self building dict
+            #but maybe keep long term?
+            if len(holdval) > 1:
+                holdval_level = holdval[1]
+                keyval = holdval[0]
+                level_plusone = holdval_level + 1
+                #controls for buildings that can dupe
+                if 'warehouse' in keyval:
+                    keyval = 'warehouse'
+                if 'granary' in keyval:
+                    keyval = 'granary'
+                upgrade_cost = building_data.building_dict[keyval][holdval_level][0]
+                upgrade_pop_cost = building_data.building_dict[keyval][level_plusone][2] - building_data.building_dict[keyval][holdval_level][2]
+                cond9 = upgrade_pop_cost < current_crop
+                #passed as a two part list, to provide the key and the name
+                if cond9:
+                    final_value = [key, holdval[0], holdval_level]
+                    final_value2 = [final_value, upgrade_cost]
+                    all_buildings.append(final_value2)
+        for key in self.fields:
+            holdval = self.fields[key]
+            holdval_level = holdval.level
+            level_plusone = holdval_level + 1
+            key2 = key[:4]
+            upgrade_cost = fields_data.field_dict[key2][holdval_level][0]
+            upgrade_pop_cost = fields_data.field_dict[key2][level_plusone][2] - fields_data.field_dict[key2][holdval_level][2]
+            cond9 = True
+            if 'Crop' not in key:
+                cond9 = upgrade_pop_cost < current_crop
+            #new addition to handle pop cost
+            #fields go in list two
+            if cond9:
+                append_details = [key, holdval_level]
+                append_details2 = [append_details, upgrade_cost]
+                all_buildings.append(append_details2)
+
+        return all_buildings
 
     #using the seperate lists, allow for upgrading of a building.
     #if decided to upgrade a building, use this
