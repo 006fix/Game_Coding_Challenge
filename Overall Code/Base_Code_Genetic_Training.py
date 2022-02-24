@@ -23,7 +23,7 @@ output_cp = []
 new_generation = 0
 
 #create a loop to run the genetic algorithm
-num_generations = 41
+num_generations = 500
 for gen in range(num_generations):
     #reset the game data
     move_time.game_counter = 0
@@ -54,7 +54,7 @@ for gen in range(num_generations):
 
 
     #new variable for game length
-    num_seconds = 600000
+    num_seconds = 1500000
 
     #now lets try running time
     for i in range(num_turns):

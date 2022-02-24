@@ -33,7 +33,7 @@ def genetic_prerun():
     num_elite = 10
 
     #define the breeding candidates
-    num_breeding = 60
+    num_breeding = 90
 
     #define the population size
     #(this is currently 9*num_breeding + num_elite)
@@ -41,7 +41,7 @@ def genetic_prerun():
 
     #input file
     input_data = leaderboard_data.leaderboard_df[['name', 'res_rank', 'cp_rank', 'pop_rank']]
-    input_data2 = input_data.sort_values(by=['res_rank', 'cp_rank', 'pop_rank'], ascending = [False, False, False])
+    input_data2 = input_data.sort_values(by=['cp_rank', 'pop_rank', 'res_rank'], ascending = [False, False, False])
 
     #new variation to attempt to preferentially select for diversity as well as score
     #old code commented out below
@@ -183,7 +183,7 @@ def create_population(chromosome_dict, elite_candidates):
         holder_population.append(chromosome_dict[key])
         if key in elite_candidates:
             output_population.append(chromosome_dict[key])
-    for j in range(9):
+    for j in range(6):
         random.shuffle(holder_population)
         list1 = holder_population[:split_num]
         list2 = holder_population[split_num:]
@@ -200,8 +200,8 @@ def create_population(chromosome_dict, elite_candidates):
         holder_chromosome = []
         for val in chromosome:
             checkval = random.randint(1,100)
-            if checkval > 98:
-                newval = val * random.uniform(0.90, 1.10)
+            if checkval > 96:
+                newval = val * random.uniform(0.85, 1.15)
                 holder_chromosome.append(newval)
             else:
                 holder_chromosome.append(val)
