@@ -69,12 +69,10 @@ def provide_ai_genloop(chromosome, owning_player):
         for i in range(84):
             holdval1 = random.uniform(0.1, 250)
             holdval2 = random.uniform(0.1, 5)
-            holdval3 = random.uniform(0.1, 5)
-            holdval4 = random.uniform(0.1, 250)
+            holdval3 = random.uniform(0.1, 250)
             test_chromosome.append(holdval1)
             test_chromosome.append(holdval2)
             test_chromosome.append(holdval3)
-            test_chromosome.append(holdval4)
         AI_chosen = genetic_AI_possibles[0](owning_player, test_chromosome)
     else:
         AI_chosen = genetic_AI_possibles[0](owning_player, chromosome)

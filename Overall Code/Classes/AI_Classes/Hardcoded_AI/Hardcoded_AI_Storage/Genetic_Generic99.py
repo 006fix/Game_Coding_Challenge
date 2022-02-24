@@ -35,8 +35,8 @@ class Genetic_Generic_1(baseclass.Underlying_Hardcoded):
                       "Iron": 0, "Crop": 0}
 
         for key in self.genes:
-            holder_set = self.temporary_chromosome[:48]
-            self.temporary_chromosome = self.temporary_chromosome[48:]
+            holder_set = self.temporary_chromosome[:36]
+            self.temporary_chromosome = self.temporary_chromosome[36:]
             final_output = np.array_split(holder_set, 12)
 
             self.genes[key] = final_output
@@ -97,8 +97,7 @@ class Genetic_Generic_1(baseclass.Underlying_Hardcoded):
         for iterator in range(len(info_packet2)):
             # list required because it's a numpy array which doesn't iterate properly otherwise
             gene_subset = list(active_gene[iterator])
-            partial_val = ((gene_subset[0] * (info_packet2[iterator] ** gene_subset[1])) ** gene_subset[2]) + \
-                          gene_subset[3]
+            partial_val = (gene_subset[0] * info_packet2[iterator] ** gene_subset[1]) + gene_subset[2]
             predicted_utility += partial_val
 
         return predicted_utility
